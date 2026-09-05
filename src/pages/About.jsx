@@ -1,9 +1,12 @@
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
   ArrowRight,
   ArrowUpRight,
+  ArrowLeft,
+  ArrowDown,
   ShieldCheck,
   Award,
   Users,
@@ -11,77 +14,180 @@ import {
   Lightbulb,
   CheckCircle2,
   MapPin,
+  Quote,
 } from 'lucide-react'
 
-import { company, stats, reasons, locations } from '../data/data'
+import {
+  company,
+  stats,
+  reasons,
+  locations,
+  reviews,
+} from '../data/data'
 
 import PageHero from '../components/PageHero'
-import SectionIntro from '../components/SectionIntro'
 
-/* --------------------------------
-   ANIMATIONS
---------------------------------- */
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
+  hidden: {
+    opacity: 0,
+    y: 28,
+  },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] },
+    transition: {
+      duration: 0.65,
+      ease: [0.22, 1, 0.36, 1],
+    },
   },
 }
 
+
 const stagger = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.08, delayChildren: 0.05 } },
+  visible: {
+    transition: {
+      staggerChildren: 0.08,
+      delayChildren: 0.04,
+    },
+  },
 }
 
-/* --------------------------------
-   HELPERS
---------------------------------- */
 
 function getStat(stat) {
   if (typeof stat === 'object') {
-    return { value: stat.value, suffix: stat.suffix || '', label: stat.label }
+    return {
+      value: stat.value,
+      suffix: stat.suffix || '',
+      label: stat.label,
+    }
   }
-  return { value: stat[0], suffix: '', label: stat[1] }
+
+  return {
+    value: stat[0],
+    suffix: '',
+    label: stat[1],
+  }
 }
+
 
 function getReason(reason) {
   if (typeof reason === 'object' && !Array.isArray(reason)) {
-    return { title: reason.title, description: reason.description }
+    return {
+      title: reason.title,
+      description: reason.description,
+    }
   }
-  return { title: reason[0], description: reason[1] }
+
+  return {
+    title: reason[0],
+    description: reason[1],
+  }
 }
 
-/* --------------------------------
-   ABOUT PAGE
---------------------------------- */
+
+function getReview(review) {
+  if (typeof review === 'object' && !Array.isArray(review)) {
+    return {
+      name: review.name || review.author || review.client || 'Client',
+      role: review.role || review.designation || '',
+      company: review.company || '',
+      text: review.text || review.review || review.quote || '',
+    }
+  }
+
+  if (Array.isArray(review)) {
+    return {
+      name: review[0] || 'Client',
+      role: review[1] || '',
+      company: review[2] || '',
+      text: review[3] || '',
+    }
+  }
+
+  return {
+    name: 'Client',
+    role: '',
+    company: '',
+    text: String(review),
+  }
+}
+
 
 function About() {
+  const [reviewIndex, setReviewIndex] = useState(0)
+
+  const reviewItems = Array.isArray(reviews)
+    ? reviews.map(getReview)
+    : []
+
+  const currentReview =
+    reviewItems[reviewIndex] || {
+      name: 'Client',
+      role: '',
+      company: '',
+      text: '',
+    }
+
+
+  const previousReview = () => {
+    setReviewIndex((current) =>
+      current === 0
+        ? reviewItems.length - 1
+        : current - 1
+    )
+  }
+
+
+  const nextReview = () => {
+    setReviewIndex((current) =>
+      current === reviewItems.length - 1
+        ? 0
+        : current + 1
+    )
+  }
+
+
   return (
     <>
       <Helmet>
-        <title>About Electro Mech Engineers | Electrical Engineering</title>
+        <title>
+          About Electro Mech Engineers | Electrical Engineering
+        </title>
+
         <meta
           name="description"
           content="Learn about Electro Mech Engineers, an electrical consulting engineering company focused on testing, commissioning, protection, performance, safety and continuity."
         />
+
         <meta
           name="keywords"
           content="about Electro Mech Engineers, electrical consulting engineers, electrical engineering company, testing commissioning, electrical protection, Navi Mumbai"
         />
-        <meta property="og:title" content="About Electro Mech Engineers" />
-        <meta property="og:description" content={company.tagline} />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://www.electromechengineers.com/about" />
+
+        <meta
+          property="og:title"
+          content="About Electro Mech Engineers"
+        />
+
+        <meta
+          property="og:description"
+          content={company.tagline}
+        />
+
+        <meta
+          property="og:type"
+          content="website"
+        />
       </Helmet>
+
 
       <main className="overflow-hidden">
 
-        {/* =================================
+        {/* =========================================================
             HERO
-        ================================== */}
+        ========================================================== */}
 
         <PageHero
           eyebrow="About us"
@@ -90,408 +196,1440 @@ function About() {
           image="/assets/about.png"
         />
 
-        {/* =================================
-            COMPANY POSITIONING
-        ================================== */}
 
-        <section className="bg-white py-24 lg:py-32">
-          <div className="mx-auto max-w-[1600px] px-6 lg:px-12 xl:px-16">
+        {/* =========================================================
+            OPENING STATEMENT
+        ========================================================== */}
+
+        <section className="bg-[#061735] py-24 text-white md:py-32 lg:py-40">
+
+          <div className="site-container">
+
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.2 }}
+              variants={fadeUp}
+              className="max-w-6xl"
+            >
+
+              <div className="flex items-center gap-3">
+
+                <span className="h-px w-10 bg-[#c8a45c]" />
+
+                <span
+                  className="
+                    font-mono
+                    text-[0.62rem]
+                    font-semibold
+                    uppercase
+                    tracking-[0.22em]
+                    text-[#29b6f6]
+                  "
+                >
+                  Who we are
+                </span>
+
+              </div>
+
+
+              <h2
+                className="
+                  mt-8
+                  text-4xl
+                  font-semibold
+                  leading-[1]
+                  tracking-[-0.045em]
+                  sm:text-5xl
+                  md:text-6xl
+                  lg:text-[5.2rem]
+                "
+              >
+                Electrical engineering is not
+                <span className="text-white/35">
+                  {' '}just about equipment.
+                </span>
+              </h2>
+
+
+              <p
+                className="
+                  mt-9
+                  max-w-3xl
+                  text-base
+                  leading-7
+                  text-white/50
+                  md:text-lg
+                  md:leading-8
+                "
+              >
+                It is about understanding how an entire system
+                behaves, where risk can appear, and what needs
+                to happen in the field to keep critical
+                infrastructure dependable.
+              </p>
+
+            </motion.div>
+
+
             <motion.div
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0.15 }}
               variants={stagger}
-              className="grid gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-20"
+              className="
+                mt-16
+                grid
+                gap-px
+                overflow-hidden
+                border
+                border-white/10
+                bg-white/10
+                md:grid-cols-3
+              "
             >
 
-              {/* CONTENT */}
-              <motion.div variants={fadeUp}>
-                <span className="text-[0.7rem] font-semibold uppercase tracking-[0.25em] text-[#168fd0]">
-                  The Electro Mech approach
-                </span>
+              {[
+                [
+                  Target,
+                  'Understand',
+                  'Start with the operating requirement, the asset and the actual engineering problem.',
+                ],
+                [
+                  Lightbulb,
+                  'Solve',
+                  'Turn testing, analysis and engineering knowledge into practical technical decisions.',
+                ],
+                [
+                  ShieldCheck,
+                  'Deliver',
+                  'Execute with discipline, safety and attention to the reliability of the finished system.',
+                ],
+              ].map(([Icon, title, text]) => (
 
-                <h2 className="mt-7 max-w-[760px] text-4xl font-semibold leading-[1.05] tracking-[-0.03em] text-[#061735] sm:text-5xl lg:text-[3.6rem]">
-                  Engineering depth.
-                  <span className="block text-[#168fd0]">Field discipline.</span>
-                  Customer focus.
-                </h2>
-
-                <p className="mt-8 max-w-[600px] text-base leading-7 text-black/55 lg:text-lg">
-                  The company profile positions Electro Mech Engineers as an
-                  electrical consulting engineering firm delivering testing,
-                  commissioning, engineering, studies and maintenance
-                  solutions for critical electrical assets.
-                </p>
-
-                <p className="mt-5 max-w-[600px] text-base leading-7 text-black/55 lg:text-lg">
-                  Our approach brings engineering knowledge and practical
-                  field execution together to help clients operate
-                  electrical systems with greater confidence.
-                </p>
-
-                <Link
-                  to="/services"
-                  className="group mt-9 inline-flex w-fit items-center gap-3 border-b border-[#061735]/20 pb-2 text-sm font-semibold tracking-wide text-[#061735] no-underline transition-colors duration-300 hover:border-[#c8a45c] hover:text-[#168fd0]"
+                <motion.article
+                  key={title}
+                  variants={fadeUp}
+                  className="
+                    bg-[#061735]
+                    p-7
+                    transition-colors
+                    duration-500
+                    hover:bg-white/[0.04]
+                    md:min-h-[250px]
+                    md:p-9
+                  "
                 >
-                  Explore capabilities
-                  <ArrowRight
-                    size={17}
-                    strokeWidth={1.5}
-                    className="transition-transform duration-300 group-hover:translate-x-1"
-                  />
-                </Link>
-              </motion.div>
 
-              {/* VISUAL */}
-              <motion.div variants={fadeUp} className="relative">
-                <div className="relative aspect-[4/4.6] overflow-hidden bg-[#061735]">
+                  <Icon
+                    size={25}
+                    strokeWidth={1.4}
+                    className="text-[#c8a45c]"
+                  />
+
+                  <h3
+                    className="
+                      mt-10
+                      text-xl
+                      font-semibold
+                    "
+                  >
+                    {title}
+                  </h3>
+
+                  <p
+                    className="
+                      mt-3
+                      max-w-sm
+                      text-sm
+                      leading-6
+                      text-white/45
+                    "
+                  >
+                    {text}
+                  </p>
+
+                </motion.article>
+
+              ))}
+
+            </motion.div>
+
+          </div>
+
+        </section>
+
+
+        {/* =========================================================
+            COMPANY POSITIONING — EDITORIAL SPLIT
+        ========================================================== */}
+
+        <section className="bg-[#f5f4f0] py-24 lg:py-32">
+
+          <div className="site-container">
+
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.15 }}
+              variants={stagger}
+              className="
+                grid
+                items-center
+                gap-14
+                lg:grid-cols-[1fr_1fr]
+                lg:gap-20
+                xl:gap-28
+              "
+            >
+
+              {/* IMAGE */}
+
+              <motion.div
+                variants={fadeUp}
+                className="relative order-2 lg:order-1"
+              >
+
+                <div
+                  className="
+                    group
+                    relative
+                    aspect-[0.94]
+                    overflow-hidden
+                    rounded-[10px]
+                    bg-[#061735]
+                  "
+                >
+
                   <img
                     src="/assets/about.png"
                     alt="Electrical engineers inspecting high-voltage substation equipment"
                     loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-700 hover:scale-[1.03]"
+                    className="
+                      h-full
+                      w-full
+                      object-cover
+                      transition-transform
+                      duration-1000
+                      group-hover:scale-[1.04]
+                    "
                   />
 
                   <div
-                    aria-hidden="true"
-                    className="absolute inset-0 bg-gradient-to-t from-[#061735]/75 via-transparent to-transparent"
+                    className="
+                      absolute
+                      inset-0
+                      bg-gradient-to-t
+                      from-[#061735]/85
+                      via-transparent
+                      to-transparent
+                    "
                   />
 
-                  <div className="absolute bottom-7 left-7 right-7 flex items-end justify-between text-white">
+
+                  <div
+                    className="
+                      absolute
+                      bottom-7
+                      left-7
+                      right-7
+                      flex
+                      items-end
+                      justify-between
+                      text-white
+                    "
+                  >
+
                     <div>
-                      <span className="text-[0.62rem] uppercase tracking-[0.2em] text-white/50">
+
+                      <span
+                        className="
+                          font-mono
+                          text-[0.58rem]
+                          uppercase
+                          tracking-[0.2em]
+                          text-white/45
+                        "
+                      >
                         Engineering discipline
                       </span>
-                      <p className="mt-2 text-xl font-semibold">Precision in the field.</p>
+
+                      <p className="mt-2 text-xl font-semibold">
+                        Precision in the field.
+                      </p>
+
                     </div>
 
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center border border-white/20 bg-white/5 backdrop-blur-sm">
-                      <ShieldCheck size={18} strokeWidth={1.4} />
+
+                    <div
+                      className="
+                        flex
+                        h-11
+                        w-11
+                        shrink-0
+                        items-center
+                        justify-center
+                        rounded-full
+                        border
+                        border-white/20
+                        bg-white/5
+                        backdrop-blur-sm
+                      "
+                    >
+                      <ShieldCheck
+                        size={18}
+                        strokeWidth={1.4}
+                      />
                     </div>
+
                   </div>
+
                 </div>
+
+              </motion.div>
+
+
+              {/* CONTENT */}
+
+              <motion.div
+                variants={fadeUp}
+                className="order-1 lg:order-2"
+              >
+
+                <div className="flex items-center gap-3">
+
+                  <span className="h-px w-10 bg-[#c8a45c]" />
+
+                  <span
+                    className="
+                      font-mono
+                      text-[0.62rem]
+                      font-semibold
+                      uppercase
+                      tracking-[0.22em]
+                      text-[#168fd0]
+                    "
+                  >
+                    The Electro Mech approach
+                  </span>
+
+                </div>
+
+
+                <h2
+                  className="
+                    mt-7
+                    max-w-3xl
+                    text-4xl
+                    font-semibold
+                    leading-[1.02]
+                    tracking-[-0.04em]
+                    text-[#061735]
+                    sm:text-5xl
+                    lg:text-[4rem]
+                  "
+                >
+                  Engineering depth.
+                  <span className="block text-[#168fd0]">
+                    Field discipline.
+                  </span>
+                  <span className="block text-[#061735]/25">
+                    Customer focus.
+                  </span>
+                </h2>
+
+
+                <p
+                  className="
+                    mt-8
+                    max-w-xl
+                    text-base
+                    leading-7
+                    text-[#061735]/55
+                    lg:text-lg
+                    lg:leading-8
+                  "
+                >
+                  The company profile positions Electro Mech
+                  Engineers as an electrical consulting
+                  engineering firm delivering testing,
+                  commissioning, engineering, studies and
+                  maintenance solutions for critical
+                  electrical assets.
+                </p>
+
+
+                <p
+                  className="
+                    mt-5
+                    max-w-xl
+                    text-base
+                    leading-7
+                    text-[#061735]/55
+                    lg:text-lg
+                    lg:leading-8
+                  "
+                >
+                  Our approach brings engineering knowledge
+                  and practical field execution together to
+                  help clients operate electrical systems with
+                  greater confidence.
+                </p>
+
+
+                <Link
+                  to="/services"
+                  className="
+                    group
+                    mt-9
+                    inline-flex
+                    items-center
+                    gap-3
+                    border-b
+                    border-[#061735]/20
+                    pb-2
+                    text-sm
+                    font-semibold
+                    tracking-wide
+                    text-[#061735]
+                    no-underline
+                    transition-colors
+                    duration-300
+                    hover:border-[#c8a45c]
+                    hover:text-[#168fd0]
+                  "
+                >
+                  Explore capabilities
+
+                  <ArrowRight
+                    size={17}
+                    strokeWidth={1.5}
+                    className="
+                      transition-transform
+                      duration-300
+                      group-hover:translate-x-1
+                    "
+                  />
+
+                </Link>
+
               </motion.div>
 
             </motion.div>
+
           </div>
+
         </section>
 
-        {/* =================================
-            COMPANY NUMBERS
-        ================================== */}
+
+        {/* =========================================================
+            NUMBERS
+        ========================================================== */}
 
         <section className="border-y border-white/10 bg-[#061735]">
-          <div className="mx-auto max-w-[1600px] px-6 lg:px-12 xl:px-16">
+
+          <div className="site-container">
+
             <motion.div
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, amount: 0.35 }}
+              viewport={{ once: true, amount: 0.3 }}
               variants={stagger}
-              className="grid divide-y divide-white/10 sm:grid-cols-2 sm:divide-x sm:divide-y-0 lg:grid-cols-4"
+              className="
+                grid
+                divide-y
+                divide-white/10
+                sm:grid-cols-2
+                sm:divide-x
+                sm:divide-y-0
+                lg:grid-cols-4
+              "
             >
+
               {stats.map((stat) => {
-                const { value, suffix, label } = getStat(stat)
+
+                const {
+                  value,
+                  suffix,
+                  label,
+                } = getStat(stat)
+
                 return (
                   <motion.div
                     key={label}
                     variants={fadeUp}
-                    className="group px-6 py-9 transition-colors duration-300 hover:bg-white/[0.03] sm:px-8 lg:px-10 lg:py-11"
+                    className="
+                      px-5
+                      py-9
+                      transition-colors
+                      duration-300
+                      hover:bg-white/[0.03]
+                      sm:px-7
+                      lg:px-9
+                      lg:py-11
+                    "
                   >
-                    <strong className="flex items-baseline text-4xl font-semibold tracking-tight text-white lg:text-5xl">
+
+                    <strong
+                      className="
+                        flex
+                        items-baseline
+                        text-4xl
+                        font-semibold
+                        tracking-tight
+                        text-white
+                        lg:text-5xl
+                      "
+                    >
                       {value}
-                      <em className="not-italic text-[#c8a45c]">{suffix}</em>
+
+                      <em
+                        className="
+                          not-italic
+                          text-[#c8a45c]
+                        "
+                      >
+                        {suffix}
+                      </em>
                     </strong>
-                    <span className="mt-2 block text-[0.68rem] font-medium uppercase tracking-[0.18em] text-white/45">
+
+
+                    <span
+                      className="
+                        mt-2
+                        block
+                        font-mono
+                        text-[0.6rem]
+                        uppercase
+                        tracking-[0.18em]
+                        text-white/40
+                      "
+                    >
                       {label}
                     </span>
+
                   </motion.div>
                 )
               })}
+
             </motion.div>
+
           </div>
+
         </section>
 
-        {/* =================================
-            ENGINEERING PHILOSOPHY
-        ================================== */}
 
-        <section className="bg-[#f5f7f9] py-24 lg:py-32">
-          <div className="mx-auto max-w-[1600px] px-6 lg:px-12 xl:px-16">
+        {/* =========================================================
+            WHY WE WORK DIFFERENTLY
+        ========================================================== */}
+
+        <section className="bg-white py-24 lg:py-32">
+
+          <div className="site-container">
+
             <motion.div
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0.15 }}
               variants={stagger}
             >
-              <SectionIntro
-                eyebrow="Engineering philosophy"
-                title="Built around the realities of electrical systems."
-                copy="Good engineering is more than a calculation or a test result. It is about understanding the asset, identifying risk and turning technical information into dependable action."
-              />
 
-              <div className="mt-14 grid gap-px overflow-hidden border border-[#061735]/10 bg-[#061735]/10 md:grid-cols-3">
-                {[
-                  [Target, '01', 'Purpose-driven engineering', 'Every engineering activity begins with the operating requirement and the outcome the electrical system needs to deliver.'],
-                  [Lightbulb, '02', 'Practical technical decisions', 'Testing and analysis should lead to information that engineers and operators can actually use.'],
-                  [ShieldCheck, '03', 'Safety-led execution', 'Electrical work demands discipline, controlled execution and attention to safety throughout the project lifecycle.'],
-                ].map(([Icon, num, title, desc]) => (
-                  <motion.article
-                    key={num}
-                    variants={fadeUp}
-                    className="group relative bg-white p-7 transition-all duration-500 hover:bg-[#061735] md:min-h-[330px] md:p-9"
-                  >
-                    <div className="flex h-11 w-11 items-center justify-center border border-[#061735]/10 text-[#168fd0] transition-colors duration-300 group-hover:border-white/15 group-hover:bg-white/5 group-hover:text-[#c8a45c]">
-                      <Icon size={24} strokeWidth={1.5} />
-                    </div>
+              <div
+                className="
+                  grid
+                  gap-8
+                  lg:grid-cols-[0.65fr_1.35fr]
+                  lg:items-end
+                  lg:gap-20
+                "
+              >
 
-                    <span className="mt-8 block text-[0.68rem] font-semibold tracking-[0.18em] text-[#061735]/30 transition-colors duration-300 group-hover:text-white/25">
-                      {num}
+                <motion.div variants={fadeUp}>
+
+                  <div className="flex items-center gap-3">
+
+                    <span className="h-px w-10 bg-[#c8a45c]" />
+
+                    <span
+                      className="
+                        font-mono
+                        text-[0.62rem]
+                        font-semibold
+                        uppercase
+                        tracking-[0.22em]
+                        text-[#168fd0]
+                      "
+                    >
+                      Why Electro Mech
                     </span>
 
-                    <h3 className="mt-3 text-xl font-semibold text-[#061735] transition-colors duration-300 group-hover:text-white">
-                      {title}
-                    </h3>
-
-                    <p className="mt-3 text-sm leading-6 text-black/50 transition-colors duration-300 group-hover:text-white/55">
-                      {desc}
-                    </p>
-                  </motion.article>
-                ))}
-              </div>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* =================================
-            OUR STRENGTHS
-        ================================== */}
-
-        <section className="bg-[#050f23] py-24 text-white lg:py-32">
-          <div className="mx-auto max-w-[1600px] px-6 lg:px-12 xl:px-16">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.15 }}
-              variants={stagger}
-            >
-              <SectionIntro
-                light
-                eyebrow="Our strengths"
-                title="Experience backed by execution."
-                copy="The company profile highlights experienced professionals, advanced technology, safety-first execution, timely delivery, quality assurance and long-term customer relationships."
-              />
-
-              <div className="mt-16 grid gap-14 lg:grid-cols-[0.8fr_1.2fr] lg:gap-24">
-
-                {/* LEFT */}
-                <motion.div variants={fadeUp} className="border-b border-white/10 pb-8 lg:border-b-0">
-                  <div className="flex items-start text-[6rem] font-semibold leading-none tracking-[-0.04em] text-white md:text-[8rem]">
-                    20
-                    <span className="mt-2 text-3xl text-[#c8a45c] md:text-5xl">+</span>
                   </div>
 
-                  <h3 className="mt-6 text-xl font-medium text-white">
-                    Years of engineering perspective.
-                  </h3>
-
-                  <p className="mt-3 max-w-sm text-sm leading-6 text-white/50">
-                    Combining technical expertise with field experience to
-                    support critical electrical infrastructure.
-                  </p>
                 </motion.div>
 
-                {/* RIGHT */}
-                <div className="border-t border-white/10">
-                  {reasons.map((reasonItem, index) => {
-                    const { title, description } = getReason(reasonItem)
-                    return (
-                      <motion.div
-                        variants={fadeUp}
-                        className="group grid gap-3 border-b border-white/10 py-7 transition-colors duration-300 hover:bg-white/[0.03] md:grid-cols-[56px_1fr_24px] md:items-start md:gap-5"
-                        key={title}
+
+                <motion.div variants={fadeUp}>
+
+                  <h2
+                    className="
+                      max-w-5xl
+                      text-4xl
+                      font-semibold
+                      leading-[1]
+                      tracking-[-0.04em]
+                      text-[#061735]
+                      sm:text-5xl
+                      lg:text-[4.4rem]
+                    "
+                  >
+                    Technical capability is
+                    <span className="text-[#168fd0]">
+                      {' '}only half the job.
+                    </span>
+                  </h2>
+
+                </motion.div>
+
+              </div>
+
+
+              <div
+                className="
+                  mt-16
+                  grid
+                  gap-px
+                  overflow-hidden
+                  border
+                  border-[#061735]/10
+                  bg-[#061735]/10
+                  md:grid-cols-2
+                "
+              >
+
+                {reasons.map((reasonItem, index) => {
+
+                  const {
+                    title,
+                    description,
+                  } = getReason(reasonItem)
+
+                  return (
+                    <motion.article
+                      key={title}
+                      variants={fadeUp}
+                      className="
+                        group
+                        bg-white
+                        p-7
+                        transition-colors
+                        duration-500
+                        hover:bg-[#061735]
+                        md:min-h-[220px]
+                        md:p-9
+                      "
+                    >
+
+                      <div
+                        className="
+                          flex
+                          items-start
+                          justify-between
+                        "
                       >
-                        <span className="text-[0.65rem] tracking-[0.18em] text-white/25">
+
+                        <span
+                          className="
+                            font-mono
+                            text-[0.62rem]
+                            tracking-[0.18em]
+                            text-[#061735]/25
+                            transition-colors
+                            group-hover:text-white/25
+                          "
+                        >
                           {String(index + 1).padStart(2, '0')}
                         </span>
 
-                        <div>
-                          <h3 className="text-lg font-medium text-white">{title}</h3>
-                          <p className="mt-2 max-w-xl text-sm leading-6 text-white/50">
-                            {description}
-                          </p>
-                        </div>
 
                         <CheckCircle2
                           size={20}
-                          className="mt-1 shrink-0 text-white/20 transition-colors duration-300 group-hover:text-[#c8a45c]"
+                          strokeWidth={1.3}
+                          className="
+                            text-[#168fd0]
+                            transition-colors
+                            group-hover:text-[#c8a45c]
+                          "
                         />
-                      </motion.div>
-                    )
-                  })}
+
+                      </div>
+
+
+                      <h3
+                        className="
+                          mt-9
+                          text-xl
+                          font-semibold
+                          text-[#061735]
+                          transition-colors
+                          group-hover:text-white
+                        "
+                      >
+                        {title}
+                      </h3>
+
+
+                      <p
+                        className="
+                          mt-3
+                          max-w-lg
+                          text-sm
+                          leading-6
+                          text-black/45
+                          transition-colors
+                          group-hover:text-white/50
+                        "
+                      >
+                        {description}
+                      </p>
+
+                    </motion.article>
+                  )
+                })}
+
+              </div>
+
+            </motion.div>
+
+          </div>
+
+        </section>
+
+
+        {/* =========================================================
+            CLIENT REVIEW SLIDER
+        ========================================================== */}
+
+        {reviewItems.length > 0 && (
+
+          <section
+            className="
+              relative
+              overflow-hidden
+              bg-[#050f23]
+              py-24
+              text-white
+              md:py-32
+              lg:py-40
+            "
+          >
+
+            <div
+              aria-hidden="true"
+              className="
+                absolute
+                inset-0
+                opacity-[0.055]
+                bg-[linear-gradient(rgba(255,255,255,0.65)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.65)_1px,transparent_1px)]
+                bg-[size:56px_56px]
+              "
+            />
+
+
+            <div className="site-container relative z-10">
+
+              <div
+                className="
+                  grid
+                  gap-12
+                  lg:grid-cols-[0.55fr_1.45fr]
+                  lg:gap-20
+                "
+              >
+
+                {/* LEFT */}
+
+                <div>
+
+                  <div className="flex items-center gap-3">
+
+                    <span className="h-px w-10 bg-[#c8a45c]" />
+
+                    <span
+                      className="
+                        font-mono
+                        text-[0.62rem]
+                        font-semibold
+                        uppercase
+                        tracking-[0.22em]
+                        text-[#29b6f6]
+                      "
+                    >
+                      Client perspective
+                    </span>
+
+                  </div>
+
+
+                  <h2
+                    className="
+                      mt-7
+                      max-w-lg
+                      text-4xl
+                      font-semibold
+                      leading-[1]
+                      tracking-[-0.04em]
+                      sm:text-5xl
+                      lg:text-[4rem]
+                    "
+                  >
+                    The work matters
+                    <span className="block text-white/30">
+                      because it works.
+                    </span>
+                  </h2>
+
+
+                  <p
+                    className="
+                      mt-6
+                      max-w-md
+                      text-base
+                      leading-7
+                      text-white/40
+                    "
+                  >
+                    A few words from the clients whose
+                    projects and requirements shape the way
+                    we engineer.
+                  </p>
+
+
+                  <div className="mt-10 flex items-center gap-3">
+
+                    <button
+                      type="button"
+                      onClick={previousReview}
+                      aria-label="Previous client review"
+                      className="
+                        flex
+                        h-11
+                        w-11
+                        items-center
+                        justify-center
+                        rounded-full
+                        border
+                        border-white/15
+                        bg-white/[0.03]
+                        text-white/65
+                        transition-all
+                        duration-300
+                        hover:border-[#c8a45c]
+                        hover:bg-[#c8a45c]
+                        hover:text-[#061735]
+                      "
+                    >
+                      <ArrowLeft
+                        size={17}
+                        strokeWidth={1.4}
+                      />
+                    </button>
+
+
+                    <button
+                      type="button"
+                      onClick={nextReview}
+                      aria-label="Next client review"
+                      className="
+                        flex
+                        h-11
+                        w-11
+                        items-center
+                        justify-center
+                        rounded-full
+                        border
+                        border-white/15
+                        bg-white/[0.03]
+                        text-white/65
+                        transition-all
+                        duration-300
+                        hover:border-[#c8a45c]
+                        hover:bg-[#c8a45c]
+                        hover:text-[#061735]
+                      "
+                    >
+                      <ArrowRight
+                        size={17}
+                        strokeWidth={1.4}
+                      />
+                    </button>
+
+
+                    <span
+                      className="
+                        ml-2
+                        font-mono
+                        text-[0.58rem]
+                        tracking-[0.18em]
+                        text-white/25
+                      "
+                    >
+                      {String(reviewIndex + 1).padStart(2, '0')}
+                      {' / '}
+                      {String(reviewItems.length).padStart(2, '0')}
+                    </span>
+
+                  </div>
+
+                </div>
+
+
+                {/* RIGHT REVIEW */}
+
+                <div
+                  className="
+                    relative
+                    min-h-[390px]
+                    border-t
+                    border-white/10
+                    pt-10
+                    lg:min-h-[430px]
+                    lg:border-l
+                    lg:border-t-0
+                    lg:pl-16
+                    lg:pt-0
+                  "
+                >
+
+                  <AnimatePresence mode="wait">
+
+                    <motion.div
+                      key={reviewIndex}
+                      initial={{
+                        opacity: 0,
+                        x: 35,
+                      }}
+                      animate={{
+                        opacity: 1,
+                        x: 0,
+                      }}
+                      exit={{
+                        opacity: 0,
+                        x: -35,
+                      }}
+                      transition={{
+                        duration: 0.45,
+                        ease: [0.22, 1, 0.36, 1],
+                      }}
+                    >
+
+                      <Quote
+                        size={42}
+                        strokeWidth={1}
+                        className="text-[#c8a45c]"
+                      />
+
+
+                      <blockquote
+                        className="
+                          mt-8
+                          max-w-4xl
+                          text-2xl
+                          font-medium
+                          leading-[1.25]
+                          tracking-[-0.025em]
+                          text-white
+                          sm:text-3xl
+                          lg:text-[2.7rem]
+                        "
+                      >
+                        “{currentReview.text}”
+                      </blockquote>
+
+
+                      <div
+                        className="
+                          mt-12
+                          flex
+                          items-end
+                          justify-between
+                          gap-6
+                          border-t
+                          border-white/10
+                          pt-6
+                        "
+                      >
+
+                        <div>
+
+                          <p
+                            className="
+                              text-base
+                              font-semibold
+                              text-white
+                            "
+                          >
+                            {currentReview.name}
+                          </p>
+
+
+                          {(currentReview.role ||
+                            currentReview.company) && (
+
+                            <p
+                              className="
+                                mt-1
+                                font-mono
+                                text-[0.58rem]
+                                uppercase
+                                tracking-[0.17em]
+                                text-white/35
+                              "
+                            >
+                              {[
+                                currentReview.role,
+                                currentReview.company,
+                              ]
+                                .filter(Boolean)
+                                .join(' · ')}
+                            </p>
+
+                          )}
+
+                        </div>
+
+
+                        <span
+                          className="
+                            hidden
+                            font-mono
+                            text-[0.58rem]
+                            uppercase
+                            tracking-[0.18em]
+                            text-white/20
+                            sm:block
+                          "
+                        >
+                          Client review
+                        </span>
+
+                      </div>
+
+                    </motion.div>
+
+                  </AnimatePresence>
+
                 </div>
 
               </div>
-            </motion.div>
-          </div>
-        </section>
 
-        {/* =================================
+            </div>
+
+          </section>
+
+        )}
+
+
+        {/* =========================================================
             PAN INDIA PRESENCE
-        ================================== */}
+        ========================================================== */}
 
-        <section className="bg-white py-24 lg:py-32">
-          <div className="mx-auto max-w-[1600px] px-6 lg:px-12 xl:px-16">
+        <section className="bg-[#f5f4f0] py-24 lg:py-32">
+
+          <div className="site-container">
+
             <motion.div
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0.15 }}
               variants={stagger}
             >
-              <SectionIntro
-                eyebrow="Our footprint"
-                title="Pan India service network."
-                copy="Electro Mech Engineers serves projects across India, supporting clients with electrical engineering and field services."
-              />
 
-              <div className="mt-14 grid gap-6 lg:grid-cols-[1.45fr_0.55fr]">
+              <div
+                className="
+                  grid
+                  gap-8
+                  lg:grid-cols-[0.55fr_1.45fr]
+                  lg:gap-20
+                "
+              >
 
-                {/* LOCATIONS VISUAL */}
+                <motion.div variants={fadeUp}>
+
+                  <div className="flex items-center gap-3">
+
+                    <span className="h-px w-10 bg-[#c8a45c]" />
+
+                    <span
+                      className="
+                        font-mono
+                        text-[0.62rem]
+                        font-semibold
+                        uppercase
+                        tracking-[0.22em]
+                        text-[#168fd0]
+                      "
+                    >
+                      Our footprint
+                    </span>
+
+                  </div>
+
+                </motion.div>
+
+
+                <motion.div variants={fadeUp}>
+
+                  <h2
+                    className="
+                      text-4xl
+                      font-semibold
+                      leading-[1]
+                      tracking-[-0.04em]
+                      text-[#061735]
+                      sm:text-5xl
+                      lg:text-[4.3rem]
+                    "
+                  >
+                    Engineering support
+                    <span className="text-[#168fd0]">
+                      {' '}across India.
+                    </span>
+                  </h2>
+
+
+                  <p
+                    className="
+                      mt-6
+                      max-w-3xl
+                      text-base
+                      leading-7
+                      text-[#061735]/50
+                      md:text-lg
+                      md:leading-8
+                    "
+                  >
+                    Electro Mech Engineers serves projects
+                    across India, supporting clients with
+                    electrical engineering and field services.
+                  </p>
+
+                </motion.div>
+
+              </div>
+
+
+              <div
+                className="
+                  mt-14
+                  grid
+                  gap-5
+                  lg:grid-cols-[1.45fr_0.55fr]
+                "
+              >
+
                 <motion.div
                   variants={fadeUp}
-                  className="relative min-h-[420px] overflow-hidden border border-[#061735]/10 bg-[#061735] p-8 md:p-12"
+                  className="
+                    relative
+                    min-h-[400px]
+                    overflow-hidden
+                    rounded-[10px]
+                    bg-[#061735]
+                    p-8
+                    md:p-12
+                  "
                 >
+
                   <div
                     aria-hidden="true"
-                    className="absolute inset-0 opacity-[0.05] bg-[linear-gradient(rgba(255,255,255,0.5)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.5)_1px,transparent_1px)] bg-[size:56px_56px]"
+                    className="
+                      absolute
+                      inset-0
+                      opacity-[0.05]
+                      bg-[linear-gradient(rgba(255,255,255,0.5)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.5)_1px,transparent_1px)]
+                      bg-[size:56px_56px]
+                    "
                   />
 
-                  <span className="relative text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-[#29b6f6]">
+
+                  <span
+                    className="
+                      relative
+                      font-mono
+                      text-[0.62rem]
+                      font-semibold
+                      uppercase
+                      tracking-[0.22em]
+                      text-[#29b6f6]
+                    "
+                  >
                     Service locations
                   </span>
 
-                  <div className="relative mt-8 flex flex-wrap gap-3">
+
+                  <div
+                    className="
+                      relative
+                      mt-9
+                      flex
+                      flex-wrap
+                      gap-3
+                    "
+                  >
+
                     {locations.map((location) => (
+
                       <span
                         key={location}
-                        className="inline-flex items-center gap-2 border border-white/15 bg-white/5 px-4 py-2.5 text-sm font-medium text-white/85 backdrop-blur-sm transition-colors duration-300 hover:border-[#c8a45c]/50 hover:bg-white/10"
+                        className="
+                          inline-flex
+                          items-center
+                          gap-2
+                          rounded-full
+                          border
+                          border-white/15
+                          bg-white/5
+                          px-4
+                          py-2.5
+                          text-sm
+                          font-medium
+                          text-white/80
+                          backdrop-blur-sm
+                          transition-colors
+                          duration-300
+                          hover:border-[#c8a45c]/50
+                          hover:bg-white/10
+                        "
                       >
-                        <MapPin size={14} className="text-[#c8a45c]" />
+
+                        <MapPin
+                          size={14}
+                          className="text-[#c8a45c]"
+                        />
+
                         {location}
+
                       </span>
+
                     ))}
+
                   </div>
+
                 </motion.div>
 
-                {/* STATS */}
+
                 <motion.div
                   variants={fadeUp}
-                  className="grid divide-y divide-[#061735]/10 border border-[#061735]/10 bg-[#f5f7f9] sm:grid-cols-2 sm:divide-x sm:divide-y-0 lg:grid-cols-1 lg:divide-x-0 lg:divide-y"
+                  className="
+                    grid
+                    divide-y
+                    divide-[#061735]/10
+                    overflow-hidden
+                    rounded-[10px]
+                    border
+                    border-[#061735]/10
+                    bg-white
+                    sm:grid-cols-2
+                    sm:divide-x
+                    sm:divide-y-0
+                    lg:grid-cols-1
+                    lg:divide-x-0
+                    lg:divide-y
+                  "
                 >
+
                   {stats.map((stat) => {
-                    const { value, suffix, label } = getStat(stat)
+
+                    const {
+                      value,
+                      suffix,
+                      label,
+                    } = getStat(stat)
+
                     return (
-                      <div key={label} className="px-7 py-6">
-                        <strong className="flex items-baseline text-2xl font-semibold text-[#061735]">
+                      <div
+                        key={label}
+                        className="px-7 py-6"
+                      >
+
+                        <strong
+                          className="
+                            flex
+                            items-baseline
+                            text-3xl
+                            font-semibold
+                            text-[#061735]
+                          "
+                        >
                           {value}
-                          <em className="not-italic text-[#168fd0]">{suffix}</em>
+
+                          <em
+                            className="
+                              not-italic
+                              text-[#168fd0]
+                            "
+                          >
+                            {suffix}
+                          </em>
                         </strong>
-                        <span className="mt-1 block text-[0.65rem] font-medium uppercase tracking-[0.16em] text-black/40">
+
+
+                        <span
+                          className="
+                            mt-1
+                            block
+                            font-mono
+                            text-[0.58rem]
+                            font-medium
+                            uppercase
+                            tracking-[0.16em]
+                            text-black/35
+                          "
+                        >
                           {label}
                         </span>
+
                       </div>
                     )
                   })}
+
                 </motion.div>
 
               </div>
+
             </motion.div>
+
           </div>
+
         </section>
 
-        {/* =================================
-            WHY CLIENTS CHOOSE US
-        ================================== */}
 
-        <section className="bg-[#f5f7f9] py-24 lg:py-32">
-          <div className="mx-auto max-w-[1600px] px-6 lg:px-12 xl:px-16">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.15 }}
-              variants={stagger}
-            >
-              <SectionIntro
-                eyebrow="Why clients choose us"
-                title="A relationship built beyond the project."
-                copy="Technical capability matters. So do responsiveness, communication, quality and accountability."
-              />
-
-              <div className="mt-14 grid gap-px border border-[#061735]/10 bg-[#061735]/10 md:grid-cols-3">
-                {[
-                  [Users, 'Customer focused', 'Building long-term relationships through clear communication and dependable support.'],
-                  [Award, 'Quality driven', 'Maintaining engineering discipline and attention to quality throughout project execution.'],
-                  [ShieldCheck, 'Safety conscious', 'Treating safety as an essential part of responsible electrical engineering execution.'],
-                ].map(([Icon, title, desc]) => (
-                  <motion.div
-                    key={title}
-                    variants={fadeUp}
-                    className="group relative bg-white p-8 transition-all duration-500 hover:bg-[#061735] lg:p-10"
-                  >
-                    <Icon
-                      size={25}
-                      strokeWidth={1.5}
-                      className="text-[#168fd0] transition-colors duration-300 group-hover:text-[#c8a45c]"
-                    />
-                    <h3 className="mt-6 text-lg font-medium text-[#061735] transition-colors duration-300 group-hover:text-white">
-                      {title}
-                    </h3>
-                    <p className="mt-3 text-sm leading-6 text-black/50 transition-colors duration-300 group-hover:text-white/55">
-                      {desc}
-                    </p>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* =================================
-            CTA
-        ================================== */}
+        {/* =========================================================
+            FINAL CTA
+        ========================================================== */}
 
         <section className="bg-[#061735] py-20 lg:py-24">
-          <div className="mx-auto max-w-[1600px] px-6 lg:px-12 xl:px-16">
+
+          <div className="site-container">
+
             <motion.div
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
               variants={fadeUp}
-              className="relative overflow-hidden border border-white/10 px-7 py-10 md:px-10 lg:flex lg:items-center lg:justify-between lg:px-14 lg:py-12"
+              className="
+                relative
+                overflow-hidden
+                rounded-[10px]
+                border
+                border-white/10
+                bg-[#050f23]
+                px-7
+                py-12
+                md:px-10
+                lg:flex
+                lg:items-center
+                lg:justify-between
+                lg:px-14
+                lg:py-14
+              "
             >
-              <div>
-                <span className="text-[0.7rem] font-semibold uppercase tracking-[0.25em] text-[#168fd0]">
+
+              <div
+                aria-hidden="true"
+                className="
+                  absolute
+                  inset-0
+                  opacity-[0.05]
+                  bg-[linear-gradient(rgba(255,255,255,0.7)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.7)_1px,transparent_1px)]
+                  bg-[size:48px_48px]
+                "
+              />
+
+
+              <div className="relative z-10">
+
+                <span
+                  className="
+                    font-mono
+                    text-[0.62rem]
+                    font-semibold
+                    uppercase
+                    tracking-[0.22em]
+                    text-[#29b6f6]
+                  "
+                >
                   Work with Electro Mech
                 </span>
 
-                <h2 className="mt-4 max-w-lg text-2xl font-semibold leading-tight tracking-tight text-white md:text-3xl">
-                  Engineering dependable electrical systems starts with the
-                  right partner.
+
+                <h2
+                  className="
+                    mt-4
+                    max-w-3xl
+                    text-3xl
+                    font-semibold
+                    leading-[1.05]
+                    tracking-[-0.03em]
+                    text-white
+                    md:text-4xl
+                    lg:text-[3.4rem]
+                  "
+                >
+                  Engineering dependable electrical
+                  systems starts with the right partner.
                 </h2>
+
               </div>
+
 
               <Link
                 to="/contact"
-                className="group relative z-10 mt-8 inline-flex w-fit shrink-0 items-center gap-3 border border-white/20 bg-white px-6 py-4 text-sm font-semibold text-[#061735] no-underline transition-all duration-300 hover:border-[#c8a45c] hover:bg-[#c8a45c] lg:ml-12 lg:mt-0"
+                className="
+                  group
+                  relative
+                  z-10
+                  mt-8
+                  inline-flex
+                  w-fit
+                  shrink-0
+                  items-center
+                  gap-3
+                  rounded-full
+                  bg-[#c8a45c]
+                  px-6
+                  py-4
+                  text-sm
+                  font-semibold
+                  text-[#061735]
+                  no-underline
+                  transition-all
+                  duration-300
+                  hover:bg-white
+                  lg:ml-12
+                  lg:mt-0
+                "
               >
+
                 Start a conversation
+
                 <ArrowUpRight
                   size={18}
                   strokeWidth={1.5}
-                  className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                  className="
+                    transition-transform
+                    duration-300
+                    group-hover:-translate-y-0.5
+                    group-hover:translate-x-0.5
+                  "
                 />
+
               </Link>
+
             </motion.div>
+
           </div>
+
         </section>
 
       </main>
