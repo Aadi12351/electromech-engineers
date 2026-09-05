@@ -124,7 +124,7 @@ ${message}
           eyebrow="Start a conversation"
           title="Let's engineer what comes next."
           copy="Share your requirement and the team can take it from there."
-          image="/assets/contact.jpg"
+          image="/assets/contact.png"
         />
 
         {/* =========================================================

@@ -114,7 +114,7 @@ function Clients() {
           eyebrow="Trusted by industry"
           title="Strong relationships. Trusted partnerships."
           copy="The company profile showcases clients across power, infrastructure, manufacturing and technology."
-          image="/assets/substation.jpg"
+          image="/assets/substation.png"
         />
 
         {/* =========================================================
