@@ -34,7 +34,18 @@ function PageHero({
   image,
 }) {
   return (
-    <section className="relative flex min-h-[520px] items-end overflow-hidden bg-[#061735] pt-[88px] md:min-h-[580px]">
+    <section
+      className="
+        relative
+        flex
+        min-h-[520px]
+        items-end
+        overflow-hidden
+        bg-[#061735]
+        pt-[88px]
+        md:min-h-[580px]
+      "
+    >
 
       {/* =========================================
           BACKGROUND IMAGE
@@ -46,25 +57,50 @@ function PageHero({
           src={image}
           alt=""
           aria-hidden="true"
-          className="h-full w-full object-cover object-center"
+          className="
+            h-full
+            w-full
+            object-cover
+            object-center
+          "
         />
 
         {/* Main dark gradient */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#030f2a]/95 via-[#030f2a]/70 to-[#030f2a]/20" />
+        <div
+          className="
+            absolute
+            inset-0
+            bg-gradient-to-r
+            from-[#030f2a]/95
+            via-[#030f2a]/70
+            to-[#030f2a]/20
+          "
+        />
 
         {/* Bottom fade */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#030f2a]/85 via-transparent to-[#030f2a]/20" />
+        <div
+          className="
+            absolute
+            inset-0
+            bg-gradient-to-t
+            from-[#030f2a]/85
+            via-transparent
+            to-[#030f2a]/20
+          "
+        />
 
         {/* Subtle blue overlay */}
         <div className="absolute inset-0 bg-[#061735]/10" />
 
       </div>
 
+
       {/* =========================================
           ENGINEERING GRID
       ========================================== */}
 
       <div
+        aria-hidden="true"
         className="
           absolute
           inset-0
@@ -74,11 +110,26 @@ function PageHero({
         "
       />
 
+
       {/* =========================================
           CONTENT
+          SAME CONTAINER AS HEADER
       ========================================== */}
 
-      <div className="relative z-10 mx-auto w-full max-w-[1600px] px-6 pb-20 lg:px-12 lg:pb-24 xl:px-16">
+      <div
+        className="
+          relative
+          z-10
+          mx-auto
+          w-full
+          max-w-[1280px]
+          px-6
+          pb-20
+          lg:px-8
+          lg:pb-24
+          xl:px-4
+        "
+      >
 
         <motion.div
           initial="hidden"
@@ -87,7 +138,9 @@ function PageHero({
           className="max-w-4xl"
         >
 
-          {/* Eyebrow */}
+          {/* =====================================
+              EYEBROW
+          ====================================== */}
 
           <motion.div
             variants={fadeUp}
@@ -96,13 +149,25 @@ function PageHero({
 
             <span className="h-px w-8 bg-[#29b6f6]" />
 
-            <span className="font-mono text-[0.65rem] font-medium uppercase tracking-[0.22em] text-[#29b6f6]">
+            <span
+              className="
+                font-mono
+                text-[0.65rem]
+                font-medium
+                uppercase
+                tracking-[0.22em]
+                text-[#29b6f6]
+              "
+            >
               {eyebrow}
             </span>
 
           </motion.div>
 
-          {/* Title */}
+
+          {/* =====================================
+              TITLE
+          ====================================== */}
 
           <motion.h1
             variants={fadeUp}
@@ -119,13 +184,16 @@ function PageHero({
               sm:text-5xl
               md:text-6xl
               lg:text-7xl
-              xl:text-[5.5rem]
+              xl:text-[3.5rem]
             "
           >
             {title}
           </motion.h1>
 
-          {/* Copy */}
+
+          {/* =====================================
+              COPY
+          ====================================== */}
 
           <motion.p
             variants={fadeUp}
@@ -147,29 +215,74 @@ function PageHero({
 
       </div>
 
-      {/* =========================================
-          PAGE CODE
-      ========================================== */}
-
-      <div className="absolute bottom-7 right-6 z-10 lg:right-12">
-
-        <span className="font-mono text-[0.6rem] font-medium uppercase tracking-[0.2em] text-white/35">
-          ELECTRO MECH / 01
-        </span>
-
-      </div>
 
       {/* =========================================
-          LEFT BOTTOM LINE
+          BOTTOM META
+          SAME 1280px HEADER CONTAINER
       ========================================== */}
 
-      <div className="absolute bottom-7 left-6 z-10 hidden items-center gap-3 lg:left-12 lg:flex">
+      <div
+        className="
+          absolute
+          bottom-7
+          left-0
+          right-0
+          z-10
+        "
+      >
 
-        <span className="h-px w-10 bg-white/20" />
+        <div
+          className="
+            mx-auto
+            flex
+            w-full
+            max-w-[1280px]
+            items-center
+            justify-between
+            px-6
+            lg:px-8
+            xl:px-4
+          "
+        >
 
-        <span className="font-mono text-[0.58rem] uppercase tracking-[0.2em] text-white/30">
-          Engineering & Reliability
-        </span>
+          {/* LEFT BOTTOM LINE */}
+
+          <div className="hidden items-center gap-3 lg:flex">
+
+            <span className="h-px w-10 bg-white/20" />
+
+            <span
+              className="
+                font-mono
+                text-[0.58rem]
+                uppercase
+                tracking-[0.2em]
+                text-white/30
+              "
+            >
+              Engineering & Reliability
+            </span>
+
+          </div>
+
+
+          {/* PAGE CODE */}
+
+          <span
+            className="
+              ml-auto
+              font-mono
+              text-[0.6rem]
+              font-medium
+              uppercase
+              tracking-[0.2em]
+              text-white/35
+            "
+          >
+            ELECTRO MECH / 01
+          </span>
+
+        </div>
 
       </div>
 

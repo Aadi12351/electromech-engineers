@@ -1,15 +1,16 @@
-import React from 'react'
+import React, { useRef, useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
   ArrowLeft,
   ArrowRight,
   ArrowUpRight,
-  ClipboardCheck,
   Factory,
   MapPin,
+  Quote,
   ShieldCheck,
+  Star,
   UsersRound,
   Wrench,
   Zap,
@@ -17,102 +18,306 @@ import {
 import {
   company,
   stats,
-
   clients,
   reasons,
+  services,
+  reviews,
 } from '../data/data'
-
-import SectionIntro from '../components/SectionIntro'
-
 
 /* =========================================================
    ANIMATIONS
+   One orchestrated reveal per section, not per element.
 ========================================================= */
 
 const fadeUp = {
-  hidden: {
-    opacity: 0,
-    y: 32,
-  },
-
+  hidden: { opacity: 0, y: 28 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: {
-      duration: 0.7,
-      ease: [0.22, 1, 0.36, 1],
-    },
-  },
-}
-
-const fadeRight = {
-  hidden: {
-    opacity: 0,
-    x: 40,
-  },
-
-  visible: {
-    opacity: 1,
-    x: 0,
-    transition: {
-      duration: 0.8,
-      ease: [0.22, 1, 0.36, 1],
-    },
+    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
   },
 }
 
 const stagger = {
   hidden: {},
-
-  visible: {
-    transition: {
-      staggerChildren: 0.09,
-    },
-  },
+  visible: { transition: { staggerChildren: 0.09 } },
 }
 
 /* =========================================================
    DATA HELPERS
+   Keep backward compatibility with whatever shape data.js
+   currently exports (array pairs or objects).
 ========================================================= */
 
 const getStat = (stat) => {
-  if (Array.isArray(stat)) {
-    return {
-      value: stat[0],
-      label: stat[1],
-    }
-  }
-
-  return {
-    value: stat?.value,
-    label: stat?.label,
-  }
+  if (Array.isArray(stat)) return { value: stat[0], suffix: '', label: stat[1] }
+  return { value: stat?.value, suffix: stat?.suffix || '', label: stat?.label }
 }
 
 const getClientName = (client) => {
-  if (Array.isArray(client)) {
-    return client[0]
-  }
-
+  if (Array.isArray(client)) return client[0]
   if (typeof client === 'object' && client !== null) {
     return client.name || client.title || client.label
   }
-
   return client
 }
 
-const getReason = (reason) => {
-  if (Array.isArray(reason)) {
-    return {
-      title: reason[0],
-      description: reason[1],
-    }
+/* =========================================================
+   SERVICE ICONS
+   data.js stores icon names so the same service data can be
+   reused across the Home and Services pages.
+========================================================= */
+
+const serviceIcons = {
+  ClipboardCheck: Zap,
+  ShieldCheck,
+  TowerControl: Zap,
+  Activity: Zap,
+  DraftingCompass: Wrench,
+  Wrench,
+}
+
+/* =========================================================
+   SMOOTH SERVICE CAROUSEL
+   Tracks real scroll position so the dots and arrows stay
+   accurate instead of firing on a fixed pixel guess.
+========================================================= */
+
+function ServiceCarousel() {
+  const trackRef = useRef(null)
+  const [activeIndex, setActiveIndex] = useState(0)
+
+  const scrollToIndex = useCallback((index) => {
+    const track = trackRef.current
+    if (!track) return
+    const card = track.children[index]
+    if (!card) return
+    track.scrollTo({ left: card.offsetLeft - 4, behavior: 'smooth' })
+  }, [])
+
+  const handleScroll = useCallback(() => {
+    const track = trackRef.current
+    if (!track) return
+    const cards = Array.from(track.children)
+    const center = track.scrollLeft + track.clientWidth / 2
+    let closest = 0
+    let closestDistance = Infinity
+    cards.forEach((card, index) => {
+      const cardCenter = card.offsetLeft + card.offsetWidth / 2
+      const distance = Math.abs(cardCenter - center)
+      if (distance < closestDistance) {
+        closestDistance = distance
+        closest = index
+      }
+    })
+    setActiveIndex(closest)
+  }, [])
+
+  useEffect(() => {
+    const track = trackRef.current
+    if (!track) return
+    track.addEventListener('scroll', handleScroll, { passive: true })
+    return () => track.removeEventListener('scroll', handleScroll)
+  }, [handleScroll])
+
+  return (
+    <div>
+      <div
+        ref={trackRef}
+        className="flex snap-x snap-mandatory gap-5 overflow-x-auto pb-2 scrollbar-none"
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+      >
+        {services.map((service, index) => {
+          const Icon = serviceIcons[service.icon] || Zap
+          return (
+            <article
+              key={service.key}
+              className="group relative min-w-[82vw] shrink-0 snap-start overflow-hidden rounded-sm bg-[#061735] sm:min-w-[360px] lg:min-w-[calc((100%-60px)/4)]"
+            >
+              <div className="relative h-[520px]">
+                <img
+                  src={service.image}
+                  alt={service.title}
+                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                />
+
+                <div className="absolute inset-0 bg-gradient-to-t from-[#03132f] via-[#061735]/70 to-[#061735]/5" />
+
+                <div className="absolute inset-x-0 bottom-0 p-6 lg:p-7">
+                  <div className="mb-6 flex h-11 w-11 items-center justify-center rounded-sm border border-[#c8a45c]/70 bg-[#061735]/40 text-white backdrop-blur-sm">
+                    <Icon size={20} strokeWidth={1.5} />
+                  </div>
+
+                  <h3 className="max-w-[280px] font-display text-2xl font-semibold leading-[1.08] tracking-[-0.02em] text-white">
+                    {service.title}
+                  </h3>
+
+                  <p className="mt-4 max-w-[320px] font-body text-sm leading-6 text-white/65">
+                    {service.description}
+                  </p>
+
+                  <Link
+                    to={`/services/${service.id}`}
+                    className="group/link mt-6 inline-flex items-center gap-2.5 border-b border-[#c8a45c] pb-1.5 font-body text-sm font-medium text-white no-underline"
+                  >
+                    Learn more
+                    <ArrowRight
+                      size={16}
+                      strokeWidth={1.5}
+                      className="transition-transform duration-300 group-hover/link:translate-x-1"
+                    />
+                  </Link>
+                </div>
+              </div>
+            </article>
+          )
+        })}
+      </div>
+
+      <div className="mt-8 flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
+          {services.map((service, index) => (
+            <button
+              key={service.key}
+              type="button"
+              aria-label={`Go to ${service.title}`}
+              onClick={() => scrollToIndex(index)}
+              className={`h-1.5 rounded-full transition-all duration-300 ${
+                index === activeIndex ? 'w-8 bg-[#168fd0]' : 'w-4 bg-slate-300 hover:bg-slate-400'
+              }`}
+            />
+          ))}
+        </div>
+
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            aria-label="Previous service"
+            onClick={() => scrollToIndex(Math.max(activeIndex - 1, 0))}
+            className="group flex h-11 w-11 items-center justify-center rounded-full border border-slate-300 bg-white text-[#061735] transition-all duration-300 hover:border-[#168fd0] hover:bg-[#168fd0] hover:text-white"
+          >
+            <ArrowLeft size={17} strokeWidth={1.5} />
+          </button>
+
+          <button
+            type="button"
+            aria-label="Next service"
+            onClick={() => scrollToIndex(Math.min(activeIndex + 1, services.length - 1))}
+            className="group flex h-11 w-11 items-center justify-center rounded-full border border-[#168fd0] bg-white text-[#168fd0] transition-all duration-300 hover:bg-[#168fd0] hover:text-white"
+          >
+            <ArrowRight size={17} strokeWidth={1.5} />
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* =========================================================
+   TESTIMONIAL SLIDER
+   Auto-advances, pauses on interaction, one card at a time
+   so quotes stay readable instead of competing for space.
+========================================================= */
+
+function TestimonialSlider() {
+  const [index, setIndex] = useState(0)
+  const [paused, setPaused] = useState(false)
+
+  useEffect(() => {
+    if (paused) return
+    const timer = setInterval(() => {
+      setIndex((current) => (current + 1) % reviews.length)
+    }, 6000)
+    return () => clearInterval(timer)
+  }, [paused])
+
+  const go = (nextIndex) => {
+    setPaused(true)
+    setIndex((nextIndex + reviews.length) % reviews.length)
   }
 
-  return {
-    title: reason?.title,
-    description: reason?.description,
-  }
+  const active = reviews[index]
+
+  return (
+    <div
+      className="relative"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
+      <Quote
+        size={64}
+        strokeWidth={1}
+        className="absolute -left-2 -top-6 text-[#c8a45c]/25 md:-left-4 md:-top-8"
+      />
+
+      <div className="relative min-h-[220px] pl-8 md:min-h-[180px] md:pl-10">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={index}
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -14 }}
+            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <div className="mb-5 flex items-center gap-1">
+              {Array.from({ length: 5 }).map((_, starIndex) => (
+                <Star
+                  key={starIndex}
+                  size={15}
+                  strokeWidth={0}
+                  className="fill-[#c8a45c] text-[#c8a45c]"
+                />
+              ))}
+            </div>
+
+            <p className="max-w-2xl font-display text-xl font-medium leading-[1.45] tracking-[-0.01em] text-[#061735] md:text-2xl">
+              {active.quote}
+            </p>
+
+            <div className="mt-6">
+              <p className="font-body text-sm font-semibold text-[#061735]">{active.person}</p>
+              <p className="mt-0.5 font-body text-sm text-slate-500">{active.role}</p>
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      <div className="mt-9 flex items-center gap-6">
+        <div className="flex items-center gap-2">
+          {reviews.map((testimonial, dotIndex) => (
+            <button
+              key={`${testimonial.company}-${dotIndex}`}
+              type="button"
+              aria-label={`Show testimonial ${dotIndex + 1}`}
+              onClick={() => go(dotIndex)}
+              className={`h-1.5 rounded-full transition-all duration-300 ${
+                dotIndex === index ? 'w-7 bg-[#168fd0]' : 'w-2.5 bg-slate-300 hover:bg-slate-400'
+              }`}
+            />
+          ))}
+        </div>
+
+        <div className="flex items-center gap-2.5">
+          <button
+            type="button"
+            aria-label="Previous testimonial"
+            onClick={() => go(index - 1)}
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-300 text-[#061735] transition-colors duration-300 hover:border-[#168fd0] hover:text-[#168fd0]"
+          >
+            <ArrowLeft size={15} strokeWidth={1.5} />
+          </button>
+          <button
+            type="button"
+            aria-label="Next testimonial"
+            onClick={() => go(index + 1)}
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-300 text-[#061735] transition-colors duration-300 hover:border-[#168fd0] hover:text-[#168fd0]"
+          >
+            <ArrowRight size={15} strokeWidth={1.5} />
+          </button>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 /* =========================================================
@@ -122,1825 +327,571 @@ const getReason = (reason) => {
 function Home() {
   return (
     <>
-      {/* =====================================================
-          SEO
-      ====================================================== */}
-
       <Helmet>
-        <title>
-          {company.name} | Electrical Consulting Engineers
-        </title>
-
+        <title>{company.name} | Electrical Consulting Engineers</title>
         <meta
           name="description"
           content={`${company.name} — ${company.tagline}. Electrical consulting, testing, protection and engineering services.`}
         />
-
         <meta
           name="keywords"
           content="electrical consulting engineers, electrical testing, protection relay testing, transformer testing, power systems, India"
         />
-
-        <meta
-          property="og:title"
-          content={`${company.name} | Electrical Consulting Engineers`}
-        />
-
-        <meta
-          property="og:description"
-          content={company.tagline}
-        />
-
-        <meta
-          property="og:type"
-          content="website"
-        />
+        <meta property="og:title" content={`${company.name} | Electrical Consulting Engineers`} />
+        <meta property="og:description" content={company.tagline} />
+        <meta property="og:type" content="website" />
       </Helmet>
 
       <main className="overflow-hidden">
 
         {/* =====================================================
-    HERO — CINEMATIC CORPORATE
-====================================================== */}
+            HERO
+        ====================================================== */}
 
-<section className="relative h-[100svh] min-h-[680px] overflow-hidden bg-[#061735]">
-
-  {/* =====================================================
-      HERO IMAGE
-  ====================================================== */}
-
-  <motion.div
-    initial={{ scale: 1.06 }}
-    animate={{ scale: 1 }}
-    transition={{
-      duration: 1.6,
-      ease: [0.22, 1, 0.36, 1],
-    }}
-    className="absolute inset-0"
-  >
-    <img
-      src="/assets/hero.jpg"
-      alt="Electrical engineering and industrial infrastructure"
-      className="
-        h-full
-        w-full
-        object-cover
-        object-center
-      "
-    />
-  </motion.div>
-
-
-  {/* =====================================================
-      CINEMATIC OVERLAYS
-  ====================================================== */}
-
-  {/* Overall image control */}
-
-  <div
-    aria-hidden="true"
-    className="
-      absolute
-      inset-0
-      bg-black/15
-    "
-  />
-
-  {/* Left / bottom cinematic gradient */}
-
-  <div
-    aria-hidden="true"
-    className="
-      absolute
-      inset-0
-      bg-gradient-to-r
-      from-[#020b1d]/90
-      via-[#061735]/45
-      to-transparent
-    "
-  />
-
-  <div
-    aria-hidden="true"
-    className="
-      absolute
-      inset-0
-      bg-gradient-to-t
-      from-[#020b1d]
-      via-[#061735]/15
-      to-transparent
-    "
-  />
-
-  {/* Subtle top protection behind header */}
-
-  <div
-    aria-hidden="true"
-    className="
-      absolute
-      inset-x-0
-      top-0
-      h-40
-      bg-gradient-to-b
-      from-black/30
-      to-transparent
-    "
-  />
-
-
-  {/* =====================================================
-      ENGINEERING GRID
-  ====================================================== */}
-
-  <div
-    aria-hidden="true"
-    className="
-      absolute
-      inset-0
-      opacity-[0.035]
-      bg-[linear-gradient(rgba(255,255,255,0.65)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.65)_1px,transparent_1px)]
-      bg-[size:80px_80px]
-    "
-  />
-
-
-  {/* =====================================================
-      HERO CONTENT
-  ====================================================== */}
-
-  <div className="relative z-10 flex h-full items-end">
-
-    <div className="site-container w-full pb-24 pt-32 lg:pb-28">
-
-      <div className="max-w-[920px]">
-
-        {/* =================================================
-            EYEBROW
-        ================================================== */}
-
-        <motion.div
-          initial={{
-            opacity: 0,
-            y: 20,
-          }}
-          animate={{
-            opacity: 1,
-            y: 0,
-          }}
-          transition={{
-            duration: 0.7,
-            delay: 0.2,
-            ease: [0.22, 1, 0.36, 1],
-          }}
-          className="
-            mb-6
-            flex
-            items-center
-            gap-3
-          "
-        >
-          <span className="h-px w-10 bg-[#c8a45c]" />
-
-          <span
-            className="
-              font-mono
-              text-[0.61rem]
-              font-medium
-              uppercase
-              tracking-[0.25em]
-              text-white/70
-            "
+        <section className="relative h-[100svh] min-h-[640px] overflow-hidden bg-[#061735]">
+          <motion.div
+            initial={{ scale: 1.06 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1] }}
+            className="absolute inset-0"
           >
-            {company.descriptor}
-          </span>
-        </motion.div>
-
-
-        {/* =================================================
-            MAIN HEADLINE
-        ================================================== */}
-
-        <motion.h1
-          initial={{
-            opacity: 0,
-            y: 45,
-          }}
-          animate={{
-            opacity: 1,
-            y: 0,
-          }}
-          transition={{
-            duration: 0.9,
-            delay: 0.3,
-            ease: [0.22, 1, 0.36, 1],
-          }}
-          className="
-            max-w-[900px]
-            font-display
-            text-[3.2rem]
-            font-semibold
-            leading-[0.94]
-            tracking-[-0.055em]
-            text-white
-            sm:text-6xl
-            md:text-7xl
-            lg:text-[5.9rem]
-            xl:text-[6.7rem]
-          "
-        >
-          Engineering the
-
-          <span className="text-[#29b6f6]">
-            {' '}power
-          </span>
-
-          <span className="block">
-            behind industry.
-          </span>
-        </motion.h1>
-
-
-        {/* =================================================
-            SUPPORTING COPY + CTA
-        ================================================== */}
-
-        <motion.div
-          initial={{
-            opacity: 0,
-            y: 25,
-          }}
-          animate={{
-            opacity: 1,
-            y: 0,
-          }}
-          transition={{
-            duration: 0.8,
-            delay: 0.55,
-            ease: [0.22, 1, 0.36, 1],
-          }}
-          className="
-            mt-7
-            flex
-            flex-col
-            gap-7
-            md:flex-row
-            md:items-end
-            md:gap-12
-          "
-        >
-
-          <p
-            className="
-              max-w-xl
-              font-body
-              text-[0.95rem]
-              leading-7
-              text-white/60
-              md:text-base
-            "
-          >
-            {company.tagline}
-          </p>
-
-
-          <Link
-            to="/services"
-            className="
-              group
-              inline-flex
-              w-fit
-              shrink-0
-              items-center
-              gap-3
-              border-b
-              border-white/35
-              pb-2
-              font-body
-              text-sm
-              font-medium
-              tracking-wide
-              text-white
-              no-underline
-              transition-all
-              duration-300
-              hover:border-[#c8a45c]
-              hover:text-[#c8a45c]
-            "
-          >
-            Explore our services
-
-            <ArrowUpRight
-              size={16}
-              strokeWidth={1.5}
-              className="
-                transition-transform
-                duration-300
-                group-hover:-translate-y-0.5
-                group-hover:translate-x-0.5
-              "
+            <img
+              src="/assets/hero.jpg"
+              alt="Electrical engineering and industrial infrastructure"
+              className="h-full w-full object-cover object-center"
             />
-          </Link>
+          </motion.div>
 
-        </motion.div>
+          <div aria-hidden="true" className="absolute inset-0 bg-black/15" />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-gradient-to-r from-[#020b1d]/90 via-[#061735]/45 to-transparent"
+          />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-gradient-to-t from-[#020b1d] via-[#061735]/15 to-transparent"
+          />
 
-      </div>
+          <div className="relative z-10 flex h-full items-end">
+            <div className="site-container w-full pb-24 pt-32 lg:pb-28">
+              <div className="max-w-[920px]">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.7, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                  className="mb-6 flex items-center gap-3"
+                >
+                  <span className="h-px w-10 bg-[#c8a45c]" />
+                  <span className="font-body text-xs font-medium text-white/70">
+                    {company.descriptor}
+                  </span>
+                </motion.div>
 
-    </div>
+                <motion.h1
+                  initial={{ opacity: 0, y: 45 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.9, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                  className="max-w-[900px] font-display text-[3.2rem] font-semibold leading-[0.94] tracking-[-0.055em] text-white sm:text-6xl md:text-7xl lg:text-[5.9rem] xl:text-[6.7rem]"
+                >
+                  Engineering the power behind industry.
+                </motion.h1>
 
-  </div>
+                <motion.div
+                  initial={{ opacity: 0, y: 25 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                  className="mt-8 flex flex-col gap-7 md:flex-row md:items-end md:gap-12"
+                >
+                  <p className="max-w-xl font-body text-[0.95rem] leading-7 text-white/60 md:text-base">
+                    {company.tagline}
+                  </p>
 
+                  <div className="flex shrink-0 items-center gap-6">
+                    <Link
+                      to="/services"
+                      className="group inline-flex w-fit items-center gap-3 border-b border-white/35 pb-2 font-body text-sm font-medium tracking-wide text-white no-underline transition-all duration-300 hover:border-[#c8a45c] hover:text-[#c8a45c]"
+                    >
+                      Explore our services
+                      <ArrowUpRight
+                        size={16}
+                        strokeWidth={1.5}
+                        className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                      />
+                    </Link>
 
-  {/* =====================================================
-      HERO FOOTER / METADATA
-  ====================================================== */}
-
-  <div
-    className="
-      absolute
-      bottom-0
-      left-0
-      right-0
-      z-10
-      border-t
-      border-white/10
-      bg-black/10
-    "
-  >
-    <div
-      className="
-        site-container
-        flex
-        h-[58px]
-        items-center
-        justify-between
-      "
-    >
-
-      {/* Left */}
-
-      <div className="flex items-center gap-4">
-
-        <span
-          className="
-            font-mono
-            text-[0.55rem]
-            uppercase
-            tracking-[0.2em]
-            text-white/40
-          "
-        >
-          Engineering & Reliability
-        </span>
-
-        <span className="hidden h-px w-10 bg-white/15 sm:block" />
-
-        <span
-          className="
-            hidden
-            font-mono
-            text-[0.55rem]
-            uppercase
-            tracking-[0.2em]
-            text-white/25
-            sm:block
-          "
-        >
-          India
-        </span>
-
-      </div>
-
-
-      {/* Right */}
-
-      <div className="flex items-center gap-5">
-
-        <span
-          className="
-            hidden
-            font-mono
-            text-[0.55rem]
-            tracking-[0.2em]
-            text-white/30
-            sm:block
-          "
-        >
-          01 / 07
-        </span>
-
-        <span
-          className="
-            flex
-            items-center
-            gap-3
-            font-mono
-            text-[0.55rem]
-            uppercase
-            tracking-[0.2em]
-            text-white/35
-          "
-        >
-          Scroll
-
-          <span className="h-px w-8 bg-white/25" />
-        </span>
-
-      </div>
-
-    </div>
-  </div>
-
-</section>
+                    <Link
+                      to="/contact"
+                      className="inline-flex w-fit shrink-0 items-center justify-center rounded-sm bg-[#c8a45c] px-6 py-3 font-body text-sm font-semibold tracking-wide text-[#061735] no-underline transition-colors duration-300 hover:bg-white"
+                    >
+                      Get in touch
+                    </Link>
+                  </div>
+                </motion.div>
+              </div>
+            </div>
+          </div>
+        </section>
 
         {/* =====================================================
             STATS
         ====================================================== */}
 
         <section className="border-b border-black/10 bg-white">
-
           <div className="site-container">
-
-            <div
-              className="
-                grid
-                grid-cols-2
-                md:grid-cols-4
-              "
-            >
+            <div className="grid grid-cols-2 md:grid-cols-4">
               {stats.map((stat, index) => {
-                const { value, label } = getStat(stat)
-
+                const { value, suffix, label } = getStat(stat)
                 return (
                   <motion.div
                     key={`${label}-${index}`}
                     initial="hidden"
                     whileInView="visible"
-                    viewport={{
-                      once: true,
-                      amount: 0.3,
-                    }}
+                    viewport={{ once: true, amount: 0.3 }}
                     variants={fadeUp}
-                    className="
-                      border-b
-                      border-r
-                      border-black/10
-                      px-5
-                      py-8
-                      last:border-r-0
-                      md:border-b-0
-                      md:px-7
-                      md:py-10
-                      lg:px-8
-                    "
+                    className="border-b border-r border-black/10 px-5 py-8 last:border-r-0 md:border-b-0 md:px-7 md:py-10 lg:px-8"
                   >
-                    <div
-                      className="
-                        font-display
-                        text-3xl
-                        font-bold
-                        tracking-[-0.035em]
-                        text-[#061735]
-                        md:text-4xl
-                      "
-                    >
-                      {value}
+                    <div className="font-display text-3xl font-bold tracking-[-0.035em] text-[#061735] md:text-4xl">
+                      {value}{suffix}
                     </div>
-
-                    <div
-                      className="
-                        mt-2
-                        font-mono
-                        text-[0.55rem]
-                        font-medium
-                        uppercase
-                        tracking-[0.18em]
-                        text-black/40
-                      "
-                    >
+                    <div className="mt-2 font-body text-[0.8rem] font-medium text-black/45">
                       {label}
                     </div>
                   </motion.div>
                 )
               })}
             </div>
-
           </div>
-
         </section>
 
-       {/* ABOUT / INTRODUCTION */}
-<section className="bg-white py-24 lg:py-32">
-  <div className="site-container">
-    <div className="grid items-center gap-14 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
+        {/* =====================================================
+            ABOUT
+        ====================================================== */}
 
-      {/* IMAGE */}
-      <motion.div
-        initial={{ opacity: 0, y: 35 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.25 }}
-        transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-        className="relative"
-      >
-        {/* Technical number */}
-        <div className="absolute -top-8 left-0 z-10 flex items-center gap-3">
-          <span className="font-mono text-[0.58rem] tracking-[0.22em] text-[#061735]/45">
-            01
-          </span>
-          <span className="h-px w-8 bg-[#c8a45c]" />
-          <span className="font-mono text-[0.58rem] uppercase tracking-[0.22em] text-[#061735]/45">
-            Our expertise
-          </span>
-        </div>
+        <section className="bg-white py-16 lg:py-20">
+          <div className="site-container">
+            <div className="grid items-center gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
 
-        <div className="relative aspect-[4/4.6] overflow-hidden bg-[#061735]">
-          <img
-  src="/assets/about.png"
-  alt="Electrical engineers inspecting high-voltage substation equipment"
-  className="h-full w-full object-cover object-center transition-transform duration-700 hover:scale-[1.03]"
-/>
+              <motion.div
+                initial={{ opacity: 0, y: 35 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.25 }}
+                transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                className="relative"
+              >
+                <div className="relative aspect-[4/4.6] overflow-hidden rounded-sm bg-[#061735]">
+                  <img
+                    src="/assets/about.png"
+                    alt="Electrical engineers inspecting high-voltage substation equipment"
+                    className="h-full w-full object-cover object-center"
+                  />
+                  <div
+                    aria-hidden="true"
+                    className="absolute inset-0 bg-gradient-to-t from-[#061735]/55 via-transparent to-transparent"
+                  />
+                  <div className="absolute bottom-0 left-0 right-0 flex items-end justify-between border-t border-white/15 px-5 py-4">
+                    <span className="font-body text-xs text-white/60">
+                      Established in 2005
+                    </span>
+                  </div>
+                </div>
+              </motion.div>
 
-          {/* Image treatment */}
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 bg-gradient-to-t from-[#061735]/55 via-transparent to-transparent"
-          />
+              <motion.div
+                initial={{ opacity: 0, y: 35 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.25 }}
+                transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+                className="lg:pl-2"
+              >
+                <div className="mb-7 flex items-center gap-3">
+                  <span className="h-px w-10 bg-[#c8a45c]" />
+                  <span className="font-body text-xs font-medium text-[#168fd0]">
+                    About Electro Mech
+                  </span>
+                </div>
 
-          {/* Engineering grid */}
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 opacity-[0.08] bg-[linear-gradient(rgba(255,255,255,0.8)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.8)_1px,transparent_1px)] bg-[size:60px_60px]"
-          />
+                <h2 className="max-w-[760px] font-display text-[2.6rem] font-semibold leading-[1] tracking-[-0.045em] text-[#061735] sm:text-5xl lg:text-[4.1rem]">
+                  Reliability, protection and performance —
+                  built into every project.
+                </h2>
 
-          {/* Image caption */}
-          <div className="absolute bottom-0 left-0 right-0 flex items-end justify-between border-t border-white/15 px-5 py-4">
-            <span className="font-mono text-[0.55rem] uppercase tracking-[0.2em] text-white/55">
-              Electrical infrastructure
-            </span>
+                <p className="mt-8 max-w-[650px] font-body text-[0.98rem] leading-7 text-slate-500 lg:text-[1.02rem]">
+                  Electro Mech Engineers provides electrical consulting and
+                  engineering services with a focus on practical field
+                  requirements and dependable technical execution.
+                </p>
 
-            <span className="font-mono text-[0.55rem] tracking-[0.15em] text-white/40">
-              EME / 01
-            </span>
+                <div className="my-9 h-px w-full max-w-[650px] bg-slate-200" />
+
+                <div className="flex flex-col gap-7 sm:flex-row sm:items-end sm:justify-between">
+                  <div>
+                    <p className="font-body text-xs font-medium text-slate-400">
+                      Engineering focus
+                    </p>
+                    <p className="mt-2 max-w-[280px] font-body text-sm leading-6 text-[#061735]">
+                      Testing. Protection. Engineering.
+                    </p>
+                  </div>
+
+                  <Link
+                    to="/about"
+                    className="group inline-flex w-fit items-center gap-3 border-b border-[#061735]/30 pb-2 font-body text-sm font-semibold tracking-wide text-[#061735] no-underline transition-all duration-300 hover:border-[#c8a45c] hover:text-[#168fd0]"
+                  >
+                    Discover our approach
+                    <ArrowUpRight
+                      size={17}
+                      strokeWidth={1.5}
+                      className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                    />
+                  </Link>
+                </div>
+              </motion.div>
+            </div>
           </div>
-        </div>
-      </motion.div>
+        </section>
 
-      {/* CONTENT */}
-      <motion.div
-        initial={{ opacity: 0, y: 35 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.25 }}
-        transition={{
-          duration: 0.8,
-          delay: 0.1,
-          ease: [0.22, 1, 0.36, 1],
-        }}
-        className="lg:pl-2"
-      >
-        {/* Eyebrow */}
-        <div className="mb-7 flex items-center gap-3">
-          <span className="h-px w-10 bg-[#c8a45c]" />
+        {/* =====================================================
+            SERVICES
+        ====================================================== */}
 
-          <span className="font-mono text-[0.61rem] font-medium uppercase tracking-[0.25em] text-[#168fd0]">
-            About Electro Mech
-          </span>
-        </div>
-
-        {/* Heading */}
-        <h2 className="max-w-[760px] font-display text-[2.6rem] font-semibold leading-[1] tracking-[-0.045em] text-[#061735] sm:text-5xl lg:text-[4.1rem]">
-          Engineering expertise built around{' '}
-          <span className="text-[#168fd0]">
-            reliability, protection
-          </span>{' '}
-          and performance.
-        </h2>
-
-        {/* Description */}
-        <p className="mt-8 max-w-[650px] font-body text-[0.98rem] leading-7 text-slate-500 lg:text-[1.02rem]">
-          Electro Mech Engineers provides electrical consulting and
-          engineering services with a focus on practical field
-          requirements and dependable technical execution.
-        </p>
-
-        {/* Divider */}
-        <div className="my-9 h-px w-full max-w-[650px] bg-slate-200" />
-
-        {/* Bottom information */}
-        <div className="flex flex-col gap-7 sm:flex-row sm:items-end sm:justify-between">
-          
-          <div>
-            <p className="font-mono text-[0.56rem] uppercase tracking-[0.2em] text-slate-400">
-              Engineering focus
-            </p>
-
-            <p className="mt-2 max-w-[280px] font-body text-sm leading-6 text-[#061735]">
-              Precision. Protection. Performance.
-            </p>
-          </div>
-
-          <Link
-            to="/about"
-            className="group inline-flex w-fit items-center gap-3 border-b border-[#061735]/30 pb-2 font-body text-sm font-semibold tracking-wide text-[#061735] no-underline transition-all duration-300 hover:border-[#c8a45c] hover:text-[#168fd0]"
-          >
-            Discover our approach
-
-            <ArrowUpRight
-              size={17}
-              strokeWidth={1.5}
-              className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-            />
-          </Link>
-        </div>
-      </motion.div>
-
-    </div>
-  </div>
-</section>
-
-       {/* SERVICES */}
-<section className="overflow-hidden bg-[#f8f9fb] py-24 lg:py-32">
-  <div className="site-container">
-
-    {/* SECTION INTRO */}
-    <div className="mb-14 flex flex-col gap-10 lg:mb-16 lg:flex-row lg:items-end lg:justify-between">
-
-      <div className="max-w-[780px]">
-        {/* Eyebrow */}
-        <div className="mb-6 flex items-center gap-3">
-          <span className="h-px w-10 bg-[#168fd0]" />
-
-          <span className="font-mono text-[0.61rem] font-medium uppercase tracking-[0.25em] text-[#168fd0]">
-            What we do
-          </span>
-        </div>
-
-        {/* Heading */}
-        <h2 className="font-display text-[2.7rem] font-semibold leading-[0.98] tracking-[-0.045em] text-[#061735] sm:text-5xl lg:text-[4.25rem]">
-          Engineering services for critical{' '}
-          <span className="block">
-            electrical systems.
-          </span>
-        </h2>
-
-        {/* Description */}
-        <p className="mt-7 max-w-[700px] font-body text-base leading-7 text-slate-500 lg:text-[1.02rem]">
-          From consulting and testing to protection and commissioning
-          support, our services are structured around dependable
-          electrical infrastructure.
-        </p>
-      </div>
-
-      {/* CAROUSEL CONTROLS */}
-      <div className="flex shrink-0 items-center gap-3">
-        <button
-          type="button"
-          aria-label="Previous services"
-          onClick={() => {
-            document
-              .getElementById('services-carousel')
-              ?.scrollBy({
-                left: -420,
-                behavior: 'smooth',
-              })
-          }}
-          className="group flex h-12 w-12 items-center justify-center rounded-full border border-slate-300 bg-white text-[#061735] transition-all duration-300 hover:border-[#168fd0] hover:bg-[#168fd0] hover:text-white"
-        >
-          <ArrowLeft
-            size={18}
-            strokeWidth={1.5}
-            className="transition-transform duration-300 group-hover:-translate-x-0.5"
-          />
-        </button>
-
-        <button
-          type="button"
-          aria-label="Next services"
-          onClick={() => {
-            document
-              .getElementById('services-carousel')
-              ?.scrollBy({
-                left: 420,
-                behavior: 'smooth',
-              })
-          }}
-          className="group flex h-12 w-12 items-center justify-center rounded-full border border-[#168fd0] bg-white text-[#168fd0] transition-all duration-300 hover:bg-[#168fd0] hover:text-white"
-        >
-          <ArrowRight
-            size={18}
-            strokeWidth={1.5}
-            className="transition-transform duration-300 group-hover:translate-x-0.5"
-          />
-        </button>
-      </div>
-    </div>
-
-
-    {/* SERVICE CAROUSEL */}
-    <div
-      id="services-carousel"
-      className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4 scrollbar-none lg:gap-5"
-      style={{
-        scrollbarWidth: 'none',
-        msOverflowStyle: 'none',
-      }}
-    >
-
-      {/* SERVICE 01 */}
-      <article className="group relative min-w-[82vw] snap-start overflow-hidden rounded-[4px] bg-[#061735] sm:min-w-[360px] lg:min-w-[calc((100%-60px)/4)] lg:flex-none">
-        <div className="relative h-[540px]">
-
-          <img
-            src="/assets/service-testing.jpg"
-            alt="Electrical testing and commissioning"
-            className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-          />
-
-          {/* Gradient */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#03132f] via-[#061735]/75 to-[#061735]/5" />
-
-          {/* Top image fade */}
-          <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/25 to-transparent" />
-
-          {/* Content */}
-          <div className="absolute inset-x-0 bottom-0 p-6 lg:p-7">
-
-            <div className="mb-7 flex items-center justify-between">
-              <span className="font-mono text-[0.6rem] tracking-[0.2em] text-white/55">
-                01
-              </span>
-
-              <div className="flex h-11 w-11 items-center justify-center border border-[#c8a45c]/70 bg-[#061735]/30 text-white backdrop-blur-sm">
-                <Zap size={20} strokeWidth={1.4} />
+        <section className="overflow-hidden bg-[#f8f9fb] py-16 lg:py-20">
+          <div className="site-container">
+            <div className="mb-10 max-w-[780px] lg:mb-12">
+              <div className="mb-6 flex items-center gap-3">
+                <span className="h-px w-10 bg-[#168fd0]" />
+                <span className="font-body text-xs font-medium text-[#168fd0]">
+                  What we do
+                </span>
               </div>
+
+              <h2 className="font-display text-[2.7rem] font-semibold leading-[0.98] tracking-[-0.045em] text-[#061735] sm:text-5xl lg:text-[4.25rem]">
+                Engineering services for critical electrical systems.
+              </h2>
+
+              <p className="mt-7 max-w-[700px] font-body text-base leading-7 text-slate-500 lg:text-[1.02rem]">
+                Our work covers testing and commissioning, relay protection, maintenance,
+                retrofitting, electrical design and power-system studies for
+                industrial plants, utilities and substations.
+              </p>
             </div>
 
-            <h3 className="max-w-[280px] font-display text-2xl font-semibold leading-[1.05] tracking-[-0.025em] text-white">
-              Testing &amp;
-              <span className="block">Commissioning</span>
-            </h3>
-
-            <p className="mt-5 max-w-[330px] font-body text-sm leading-6 text-white/65">
-              Protection systems, control &amp; relay panels,
-              switchgear, transformers and associated equipment.
-            </p>
-
-            <Link
-              to="/services/testing-commissioning"
-              className="group/link mt-7 inline-flex items-center gap-3 border-b border-[#c8a45c] pb-2 font-body text-sm font-medium text-white no-underline"
-            >
-              Learn more
-
-              <ArrowRight
-                size={16}
-                strokeWidth={1.5}
-                className="transition-transform duration-300 group-hover/link:translate-x-1"
-              />
-            </Link>
+            <ServiceCarousel />
           </div>
-        </div>
-      </article>
-
-
-      {/* SERVICE 02 */}
-      <article className="group relative min-w-[82vw] snap-start overflow-hidden rounded-[4px] bg-[#061735] sm:min-w-[360px] lg:min-w-[calc((100%-60px)/4)] lg:flex-none">
-        <div className="relative h-[540px]">
-
-          <img
-            src="/assets/service-relay.jpg"
-            alt="Relay protection engineering"
-            className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-          />
-
-          <div className="absolute inset-0 bg-gradient-to-t from-[#03132f] via-[#061735]/75 to-[#061735]/5" />
-
-          <div className="absolute inset-x-0 bottom-0 p-6 lg:p-7">
-
-            <div className="mb-7 flex items-center justify-between">
-              <span className="font-mono text-[0.6rem] tracking-[0.2em] text-white/55">
-                02
-              </span>
-
-              <div className="flex h-11 w-11 items-center justify-center border border-[#c8a45c]/70 bg-[#061735]/30 text-white backdrop-blur-sm">
-                <ShieldCheck size={20} strokeWidth={1.4} />
-              </div>
-            </div>
-
-            <h3 className="max-w-[280px] font-display text-2xl font-semibold leading-[1.05] tracking-[-0.025em] text-white">
-              Relay Protection
-            </h3>
-
-            <p className="mt-5 max-w-[330px] font-body text-sm leading-6 text-white/65">
-              Testing and commissioning of electromechanical,
-              static and numerical protection relays with a focus
-              on dependable protection.
-            </p>
-
-            <Link
-              to="/services/relay-protection"
-              className="group/link mt-7 inline-flex items-center gap-3 border-b border-[#c8a45c] pb-2 font-body text-sm font-medium text-white no-underline"
-            >
-              Learn more
-
-              <ArrowRight
-                size={16}
-                strokeWidth={1.5}
-                className="transition-transform duration-300 group-hover/link:translate-x-1"
-              />
-            </Link>
-          </div>
-        </div>
-      </article>
-
-
-      {/* SERVICE 03 */}
-      <article className="group relative min-w-[82vw] snap-start overflow-hidden rounded-[4px] bg-[#061735] sm:min-w-[360px] lg:min-w-[calc((100%-60px)/4)] lg:flex-none">
-        <div className="relative h-[540px]">
-
-          <img
-            src="/assets/service-substation.jpg"
-            alt="Substation engineering"
-            className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-          />
-
-          <div className="absolute inset-0 bg-gradient-to-t from-[#03132f] via-[#061735]/75 to-[#061735]/5" />
-
-          <div className="absolute inset-x-0 bottom-0 p-6 lg:p-7">
-
-            <div className="mb-7 flex items-center justify-between">
-              <span className="font-mono text-[0.6rem] tracking-[0.2em] text-white/55">
-                03
-              </span>
-
-              <div className="flex h-11 w-11 items-center justify-center border border-[#c8a45c]/70 bg-[#061735]/30 text-white backdrop-blur-sm">
-                <Zap size={20} strokeWidth={1.4} />
-              </div>
-            </div>
-
-            <h3 className="max-w-[280px] font-display text-2xl font-semibold leading-[1.05] tracking-[-0.025em] text-white">
-              Substation
-              <span className="block">Engineering</span>
-            </h3>
-
-            <p className="mt-5 max-w-[330px] font-body text-sm leading-6 text-white/65">
-              End-to-end secondary system design, layout,
-              engineering, cable scheduling and BOQ preparation.
-            </p>
-
-            <Link
-              to="/services/substation-engineering"
-              className="group/link mt-7 inline-flex items-center gap-3 border-b border-[#c8a45c] pb-2 font-body text-sm font-medium text-white no-underline"
-            >
-              Learn more
-
-              <ArrowRight
-                size={16}
-                strokeWidth={1.5}
-                className="transition-transform duration-300 group-hover/link:translate-x-1"
-              />
-            </Link>
-          </div>
-        </div>
-      </article>
-
-
-      {/* SERVICE 04 */}
-      <article className="group relative min-w-[82vw] snap-start overflow-hidden rounded-[4px] bg-[#061735] sm:min-w-[360px] lg:min-w-[calc((100%-60px)/4)] lg:flex-none">
-        <div className="relative h-[540px]">
-
-          <img
-            src="/assets/service-consulting.jpg"
-            alt="Electrical consulting"
-            className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-          />
-
-          <div className="absolute inset-0 bg-gradient-to-t from-[#03132f] via-[#061735]/75 to-[#061735]/5" />
-
-          <div className="absolute inset-x-0 bottom-0 p-6 lg:p-7">
-
-            <div className="mb-7 flex items-center justify-between">
-              <span className="font-mono text-[0.6rem] tracking-[0.2em] text-white/55">
-                04
-              </span>
-
-              <div className="flex h-11 w-11 items-center justify-center border border-[#c8a45c]/70 bg-[#061735]/30 text-white backdrop-blur-sm">
-                <UsersRound size={20} strokeWidth={1.4} />
-              </div>
-            </div>
-
-            <h3 className="max-w-[280px] font-display text-2xl font-semibold leading-[1.05] tracking-[-0.025em] text-white">
-              Electrical
-              <span className="block">Consulting</span>
-            </h3>
-
-            <p className="mt-5 max-w-[330px] font-body text-sm leading-6 text-white/65">
-              Technical consultancy for system studies,
-              capacity planning and electrical engineering
-              assessments.
-            </p>
-
-            <Link
-              to="/services/electrical-consulting"
-              className="group/link mt-7 inline-flex items-center gap-3 border-b border-[#c8a45c] pb-2 font-body text-sm font-medium text-white no-underline"
-            >
-              Learn more
-
-              <ArrowRight
-                size={16}
-                strokeWidth={1.5}
-                className="transition-transform duration-300 group-hover/link:translate-x-1"
-              />
-            </Link>
-          </div>
-        </div>
-      </article>
-
-
-      {/* SERVICE 05 */}
-      <article className="group relative min-w-[82vw] snap-start overflow-hidden rounded-[4px] bg-[#061735] sm:min-w-[360px] lg:min-w-[calc((100%-60px)/4)] lg:flex-none">
-        <div className="relative h-[540px]">
-
-          <img
-            src="/assets/service-maintenance.jpg"
-            alt="Electrical support and maintenance"
-            className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-          />
-
-          <div className="absolute inset-0 bg-gradient-to-t from-[#03132f] via-[#061735]/75 to-[#061735]/5" />
-
-          <div className="absolute inset-x-0 bottom-0 p-6 lg:p-7">
-
-            <div className="mb-7 flex items-center justify-between">
-              <span className="font-mono text-[0.6rem] tracking-[0.2em] text-white/55">
-                05
-              </span>
-
-              <div className="flex h-11 w-11 items-center justify-center border border-[#c8a45c]/70 bg-[#061735]/30 text-white backdrop-blur-sm">
-                <Wrench size={20} strokeWidth={1.4} />
-              </div>
-            </div>
-
-            <h3 className="max-w-[280px] font-display text-2xl font-semibold leading-[1.05] tracking-[-0.025em] text-white">
-              Support &amp;
-              <span className="block">Maintenance</span>
-            </h3>
-
-            <p className="mt-5 max-w-[330px] font-body text-sm leading-6 text-white/65">
-              Maintenance support, inspections and performance
-              evaluation to maximize electrical system
-              availability.
-            </p>
-
-            <Link
-              to="/services/support-maintenance"
-              className="group/link mt-7 inline-flex items-center gap-3 border-b border-[#c8a45c] pb-2 font-body text-sm font-medium text-white no-underline"
-            >
-              Learn more
-
-              <ArrowRight
-                size={16}
-                strokeWidth={1.5}
-                className="transition-transform duration-300 group-hover/link:translate-x-1"
-              />
-            </Link>
-          </div>
-        </div>
-      </article>
-
-    </div>
-
-
-    {/* BOTTOM NAVIGATION */}
-    <div className="mt-8 flex items-center justify-between">
-
-      <div className="flex items-center gap-3">
-        <span className="h-1.5 w-8 rounded-full bg-[#168fd0]" />
-        <span className="h-1.5 w-8 rounded-full bg-slate-300" />
-        <span className="h-1.5 w-8 rounded-full bg-slate-300" />
-        <span className="h-1.5 w-8 rounded-full bg-slate-300" />
-        <span className="h-1.5 w-8 rounded-full bg-slate-300" />
-      </div>
-
-      <Link
-        to="/services"
-        className="group inline-flex items-center gap-2 font-mono text-[0.58rem] uppercase tracking-[0.18em] text-[#061735] no-underline transition-colors hover:text-[#168fd0]"
-      >
-        View all services
-
-        <ArrowUpRight
-          size={15}
-          strokeWidth={1.5}
-          className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-        />
-      </Link>
-
-    </div>
-
-  </div>
-</section>
+        </section>
 
         {/* =====================================================
             CAPABILITIES
         ====================================================== */}
 
-        <section className="bg-[#061735] py-24 md:py-32">
-
+        <section className="bg-[#061735] py-16 md:py-20">
           <div className="site-container">
-
-            <div
-              className="
-                grid
-                gap-16
-                lg:grid-cols-[0.85fr_1.15fr]
-                lg:gap-24
-              "
-            >
-
-              {/* Copy */}
-
+            <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
               <motion.div
                 initial="hidden"
                 whileInView="visible"
-                viewport={{
-                  once: true,
-                  amount: 0.2,
-                }}
+                viewport={{ once: true, amount: 0.2 }}
                 variants={stagger}
               >
-                <motion.span
-                  variants={fadeUp}
-                  className="
-                    font-mono
-                    text-[0.62rem]
-                    font-medium
-                    uppercase
-                    tracking-[0.22em]
-                    text-[#29b6f6]
-                  "
-                >
+                <motion.span variants={fadeUp} className="font-body text-xs font-medium text-[#29b6f6]">
                   Built for the field
                 </motion.span>
 
                 <motion.h2
                   variants={fadeUp}
-                  className="
-                    mt-6
-                    max-w-xl
-                    font-display
-                    text-3xl
-                    font-bold
-                    leading-[1.06]
-                    tracking-[-0.04em]
-                    text-white
-                    md:text-5xl
-                  "
+                  className="mt-6 max-w-xl font-display text-3xl font-bold leading-[1.06] tracking-[-0.04em] text-white md:text-5xl"
                 >
-                  Engineering decisions
-                  grounded in real-world
-                  electrical systems.
+                  Practical electrical engineering, from testing to protection.
                 </motion.h2>
 
-                <motion.p
-                  variants={fadeUp}
-                  className="
-                    mt-7
-                    max-w-lg
-                    font-body
-                    text-base
-                    leading-8
-                    text-white/45
-                  "
-                >
-                  Technical capability matters most
-                  when it translates into practical,
-                  measurable outcomes in the field.
+                <motion.p variants={fadeUp} className="mt-7 max-w-lg font-body text-base leading-8 text-white/45">
+                  Our work is grounded in practical field testing, protection,
+                  maintenance, retrofitting and engineering studies for electrical systems.
                 </motion.p>
               </motion.div>
-
-              {/* Capability cards */}
 
               <motion.div
                 initial="hidden"
                 whileInView="visible"
-                viewport={{
-                  once: true,
-                  amount: 0.2,
-                }}
+                viewport={{ once: true, amount: 0.2 }}
                 variants={stagger}
-                className="
-                  grid
-                  gap-px
-                  border
-                  border-white/10
-                  bg-white/10
-                  sm:grid-cols-2
-                "
+                className="grid gap-px border border-white/10 bg-white/10 sm:grid-cols-2"
               >
+                {reasons.slice(0, 4).map((reason) => {
+                  const item = {
+                    icon: Zap,
+                    title: Array.isArray(reason) ? reason[0] : reason.title,
+                    description: Array.isArray(reason) ? reason[1] : reason.description,
+                  }
+                  const Icon = item.icon
+                  return (
+                    <motion.div
+                      key={item.title}
+                      variants={fadeUp}
+                      className="group bg-[#061735] p-7 transition-colors duration-300 hover:bg-[#0a2145] md:p-9"
+                    >
+                      <Icon
+                        size={27}
+                        strokeWidth={1.35}
+                        className="text-[#c8a45c] transition-transform duration-300 group-hover:scale-105"
+                      />
+                      <h3 className="mt-6 font-display text-lg font-semibold text-white">
+                        {item.title}
+                      </h3>
+                      <p className="mt-3 font-body text-sm leading-6 text-white/40">
+                        {item.description}
+                      </p>
+                    </motion.div>
+                  )
+                })}
+              </motion.div>
+            </div>
+          </div>
+        </section>
 
-                {/* Protection */}
+        {/* =====================================================
+            CLIENT REVIEWS
+        ====================================================== */}
 
-                <motion.div
-                  variants={fadeUp}
-                  className="
-                    group
-                    bg-[#061735]
-                    p-7
-                    transition-colors
-                    duration-300
-                    hover:bg-[#0a2145]
-                    md:p-9
-                  "
-                >
-                  <ShieldCheck
-                    size={27}
-                    strokeWidth={1.35}
-                    className="
-                      text-[#c8a45c]
-                      transition-transform
-                      duration-300
-                      group-hover:scale-105
-                    "
-                  />
+        <section className="bg-white py-16 lg:py-20">
+          <div className="site-container">
+            <div className="grid gap-10 lg:grid-cols-[0.55fr_1.45fr] lg:gap-16">
 
-                  <h3
-                    className="
-                      mt-6
-                      font-display
-                      text-lg
-                      font-semibold
-                      text-white
-                    "
-                  >
-                    Protection
-                  </h3>
+              <motion.div
+                initial={{ opacity: 0, y: 28 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <div className="mb-6 flex items-center gap-3">
+                  <span className="h-px w-10 bg-[#c8a45c]" />
+                  <span className="font-body text-xs font-medium text-[#168fd0]">
+                    Client feedback
+                  </span>
+                </div>
 
-                  <p
-                    className="
-                      mt-3
-                      font-body
-                      text-sm
-                      leading-6
-                      text-white/40
-                    "
-                  >
-                    Supporting dependable protection
-                    and electrical system performance.
-                  </p>
-                </motion.div>
+                <h2 className="font-display text-[2.4rem] font-semibold leading-[1.02] tracking-[-0.04em] text-[#061735] sm:text-5xl">
+                  Client feedback, with verified testimonials to follow.
+                </h2>
 
-                {/* Testing */}
-
-                <motion.div
-                  variants={fadeUp}
-                  className="
-                    group
-                    bg-[#061735]
-                    p-7
-                    transition-colors
-                    duration-300
-                    hover:bg-[#0a2145]
-                    md:p-9
-                  "
-                >
-                  <Zap
-                    size={27}
-                    strokeWidth={1.35}
-                    className="
-                      text-[#c8a45c]
-                      transition-transform
-                      duration-300
-                      group-hover:scale-105
-                    "
-                  />
-
-                  <h3
-                    className="
-                      mt-6
-                      font-display
-                      text-lg
-                      font-semibold
-                      text-white
-                    "
-                  >
-                    Testing
-                  </h3>
-
-                  <p
-                    className="
-                      mt-3
-                      font-body
-                      text-sm
-                      leading-6
-                      text-white/40
-                    "
-                  >
-                    Structured testing and diagnostics
-                    for electrical equipment and systems.
-                  </p>
-                </motion.div>
-
-                {/* Industrial */}
-
-                <motion.div
-                  variants={fadeUp}
-                  className="
-                    group
-                    bg-[#061735]
-                    p-7
-                    transition-colors
-                    duration-300
-                    hover:bg-[#0a2145]
-                    md:p-9
-                  "
-                >
-                  <Factory
-                    size={27}
-                    strokeWidth={1.35}
-                    className="
-                      text-[#c8a45c]
-                      transition-transform
-                      duration-300
-                      group-hover:scale-105
-                    "
-                  />
-
-                  <h3
-                    className="
-                      mt-6
-                      font-display
-                      text-lg
-                      font-semibold
-                      text-white
-                    "
-                  >
-                    Industrial Focus
-                  </h3>
-
-                  <p
-                    className="
-                      mt-3
-                      font-body
-                      text-sm
-                      leading-6
-                      text-white/40
-                    "
-                  >
-                    Engineering support aligned with
-                    demanding industrial environments.
-                  </p>
-                </motion.div>
-
-                {/* Reach */}
-
-                <motion.div
-                  variants={fadeUp}
-                  className="
-                    group
-                    bg-[#061735]
-                    p-7
-                    transition-colors
-                    duration-300
-                    hover:bg-[#0a2145]
-                    md:p-9
-                  "
-                >
-                  <MapPin
-                    size={27}
-                    strokeWidth={1.35}
-                    className="
-                      text-[#c8a45c]
-                      transition-transform
-                      duration-300
-                      group-hover:scale-105
-                    "
-                  />
-
-                  <h3
-                    className="
-                      mt-6
-                      font-display
-                      text-lg
-                      font-semibold
-                      text-white
-                    "
-                  >
-                    Pan-India Reach
-                  </h3>
-
-                  <p
-                    className="
-                      mt-3
-                      font-body
-                      text-sm
-                      leading-6
-                      text-white/40
-                    "
-                  >
-                    Engineering activities delivered
-                    across locations throughout India.
-                  </p>
-                </motion.div>
-
+                <p className="mt-6 max-w-md font-body text-[0.98rem] leading-7 text-slate-500">
+                  Client testimonials are being collected and will be updated here
+                  as approved feedback is received.
+                </p>
               </motion.div>
 
+              <motion.div
+                initial={{ opacity: 0, y: 28 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+                className="rounded-sm border border-slate-200 bg-[#fbfaf8] px-7 py-8 md:px-10 md:py-10"
+              >
+                <TestimonialSlider />
+              </motion.div>
             </div>
-
           </div>
-
         </section>
 
         {/* =====================================================
             CLIENTS
         ====================================================== */}
 
-        <section className="overflow-hidden bg-white py-24 lg:py-28">
+        <section className="overflow-hidden bg-[#f8f9fb] py-16 lg:py-20">
           <div className="site-container">
-
             <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{
-                once: true,
-                amount: 0.2,
-              }}
-              variants={stagger}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.6 }}
+              className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"
             >
-              <div className="flex flex-col gap-7 lg:flex-row lg:items-end lg:justify-between">
-
-                <div className="max-w-[820px]">
-                  <motion.div
-                    variants={fadeUp}
-                    className="mb-6 flex items-center gap-3"
-                  >
-                    <span className="h-px w-10 bg-[#168fd0]" />
-
-                    <span className="font-mono text-[0.61rem] font-medium uppercase tracking-[0.25em] text-[#168fd0]">
-                      Selected clients
-                    </span>
-                  </motion.div>
-
-                  <motion.h2
-                    variants={fadeUp}
-                    className="font-display text-[2.7rem] font-semibold leading-[0.98] tracking-[-0.045em] text-[#061735] sm:text-5xl lg:text-[4.2rem]"
-                  >
-                    Trusted across industrial sectors.
-                  </motion.h2>
-
-                  <motion.p
-                    variants={fadeUp}
-                    className="mt-7 max-w-[720px] font-body text-base leading-7 text-slate-500 lg:text-[1.02rem]"
-                  >
-                    Our client relationships reflect experience working across
-                    electrical and industrial requirements.
-                  </motion.p>
-                </div>
-
-                <motion.div
-                  variants={fadeUp}
-                  className="flex items-center gap-3 lg:pb-1"
-                >
-                  <span className="font-mono text-[0.56rem] uppercase tracking-[0.2em] text-black/35">
-                    Client network
-                  </span>
-
-                  <span className="h-px w-8 bg-[#c8a45c]" />
-                </motion.div>
-
+              <div>
+                <span className="font-body text-xs font-medium text-[#168fd0]">
+                  Selected company references
+                </span>
+                <h2 className="mt-3 font-display text-2xl font-semibold tracking-[-0.02em] text-[#061735] md:text-3xl">
+                  Selected references
+                </h2>
               </div>
-            </motion.div>
 
-          </div>
-
-          {/* CLIENT LOGO MARQUEE */}
-
-          <div className="mt-16 overflow-hidden border-y border-black/10 py-8">
-            <div className="client-marquee flex w-max items-center">
-              {[...clients, ...clients].map((client, index) => {
-                const name = getClientName(client)
-
-                return (
-                  <div
-                    key={`${name}-${index}`}
-                    className="
-                      mx-8
-                      flex
-                      h-16
-                      min-w-[170px]
-                      items-center
-                      justify-center
-                      whitespace-nowrap
-                      md:mx-10
-                      md:min-w-[190px]
-                    "
-                  >
-                    <img
-                      src="/assets/L&T.webp"
-                      alt={name}
-                      loading="lazy"
-                      className="
-                        max-h-12
-                        max-w-[175px]
-                        w-auto
-                        object-contain
-                        opacity-80
-                        transition-opacity
-                        duration-300
-                        hover:opacity-100
-                      "
-                    />
-
-                    <span
-                      aria-hidden="true"
-                      className="ml-8 h-1 w-1 shrink-0 rounded-full bg-[#c8a45c]"
-                    />
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-
-          <div className="site-container">
-            <motion.div
-              initial={{
-                opacity: 0,
-                y: 20,
-              }}
-              whileInView={{
-                opacity: 1,
-                y: 0,
-              }}
-              viewport={{
-                once: true,
-                amount: 0.3,
-              }}
-              transition={{
-                duration: 0.6,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-              className="pt-8"
-            >
               <Link
                 to="/clients"
-                className="group inline-flex items-center gap-3 border-b border-[#061735]/25 pb-2 font-body text-sm font-semibold tracking-wide text-[#061735] no-underline transition-all duration-300 hover:border-[#c8a45c] hover:text-[#168fd0]"
+                className="group inline-flex items-center gap-2 font-body text-sm font-medium text-[#061735] no-underline transition-colors hover:text-[#168fd0]"
               >
-                Explore our client portfolio
-
+                View company references
                 <ArrowUpRight
-                  size={17}
+                  size={15}
                   strokeWidth={1.5}
                   className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
                 />
               </Link>
             </motion.div>
           </div>
+
+          <div className="mt-12 overflow-hidden border-y border-black/10 bg-white py-8">
+            <div className="client-marquee flex w-max items-center">
+              {[...clients, ...clients].map((client, index) => {
+                const name = getClientName(client)
+                return (
+                  <div
+                    key={`${name}-${index}`}
+                    className="mx-8 flex h-16 min-w-[170px] items-center justify-center whitespace-nowrap md:mx-10 md:min-w-[190px]"
+                  >
+                    <span className="px-3 text-center font-display text-sm font-semibold tracking-[-0.01em] text-[#061735]/65 transition-colors duration-300 hover:text-[#168fd0] md:text-base">
+                      {name}
+                    </span>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
         </section>
 
-       {/* =====================================================
-    WHY US
-====================================================== */}
+        {/* =====================================================
+            WHY ELECTRO MECH
+            Reworked from a numbered checklist into a proof-led
+            feature grid — each claim is paired with what it
+            actually means for the client, not just a label.
+        ====================================================== */}
 
-<section className="relative overflow-hidden bg-[#061735] py-16 md:py-20">
+        <section className="relative overflow-hidden bg-[#061735] py-16 md:py-20">
+          <div className="site-container relative z-10">
 
-  {/* Subtle technical grid */}
-  <div
-    aria-hidden="true"
-    className="
-      pointer-events-none
-      absolute
-      inset-0
-      opacity-[0.035]
-      bg-[linear-gradient(rgba(255,255,255,0.8)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.8)_1px,transparent_1px)]
-      bg-[size:72px_72px]
-    "
-  />
-
-  <div className="site-container relative z-10">
-
-    {/* Header */}
-
-    <motion.div
-      initial={{ opacity: 0, y: 18 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.3 }}
-      transition={{ duration: 0.6 }}
-      className="max-w-3xl"
-    >
-
-      <div className="mb-5 flex items-center gap-3">
-
-        <span className="h-px w-8 bg-[#c8a45c]" />
-
-        <span
-          className="
-            font-mono
-            text-[0.58rem]
-            font-medium
-            uppercase
-            tracking-[0.24em]
-            text-[#29b6f6]
-          "
-        >
-          Why Electro Mech
-        </span>
-
-      </div>
-
-      <h2
-        className="
-          max-w-3xl
-          font-display
-          text-[2.35rem]
-          font-semibold
-          leading-[1]
-          tracking-[-0.04em]
-          text-white
-          sm:text-4xl
-          lg:text-[3.6rem]
-        "
-      >
-        Engineering that
-        <span className="text-[#29b6f6]"> works in the real world.</span>
-      </h2>
-
-      <p
-        className="
-          mt-5
-          max-w-2xl
-          font-body
-          text-sm
-          leading-6
-          text-white/50
-          md:text-[0.95rem]
-        "
-      >
-        Our approach combines technical discipline with practical
-        execution to deliver dependable electrical engineering outcomes.
-      </p>
-
-    </motion.div>
-
-
-    {/* Reasons */}
-
-    <motion.div
-      initial="hidden"
-      whileInView="visible"
-      viewport={{
-        once: true,
-        amount: 0.15,
-      }}
-      variants={stagger}
-      className="mt-10 border-t border-white/15"
-    >
-
-      {reasons.map((reason, index) => {
-
-        const { title, description } = getReason(reason)
-
-        return (
-          <motion.div
-            key={`${title}-${index}`}
-            variants={fadeUp}
-            className="
-              group
-              grid
-              gap-3
-              border-b
-              border-white/10
-              py-4
-              transition-colors
-              duration-300
-              hover:bg-white/[0.025]
-              sm:grid-cols-[70px_1fr_32px]
-              sm:items-center
-              sm:gap-6
-              md:py-[1.1rem]
-            "
-          >
-
-            {/* Number */}
-
-            <span
-              className="
-                font-mono
-                text-[0.58rem]
-                font-medium
-                tracking-[0.15em]
-                text-[#c8a45c]
-              "
+            <motion.div
+              initial={{ opacity: 0, y: 22 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              className="mx-auto max-w-2xl text-center"
             >
-              {String(index + 1).padStart(2, '0')}
-            </span>
+              <span className="font-body text-xs font-medium text-[#29b6f6]">
+                Why Electro Mech
+              </span>
 
+              <h2 className="mt-5 font-display text-[2.4rem] font-semibold leading-[1.05] tracking-[-0.04em] text-white sm:text-5xl">
+                Built around testing, protection and dependable field service.
+              </h2>
 
-            {/* Content */}
-
-            <div>
-
-              <h3
-                className="
-                  font-display
-                  text-base
-                  font-semibold
-                  tracking-[-0.015em]
-                  text-white
-                  transition-colors
-                  duration-300
-                  group-hover:text-[#29b6f6]
-                  md:text-lg
-                "
-              >
-                {title}
-              </h3>
-
-              <p
-                className="
-                  mt-1
-                  max-w-3xl
-                  font-body
-                  text-xs
-                  leading-5
-                  text-white/40
-                  transition-colors
-                  duration-300
-                  group-hover:text-white/55
-                  md:text-sm
-                "
-              >
-                {description}
+              <p className="mt-5 font-body text-base leading-7 text-white/50">
+                Our approach is grounded in practical testing, protection engineering,
+                maintenance and technical support for electrical systems.
               </p>
+            </motion.div>
 
-            </div>
-
-
-            {/* Arrow */}
-
-            <div
-              className="
-                hidden
-                h-7
-                w-7
-                items-center
-                justify-center
-                rounded-full
-                border
-                border-white/10
-                text-white/25
-                transition-all
-                duration-300
-                group-hover:border-[#29b6f6]/50
-                group-hover:bg-[#29b6f6]
-                group-hover:text-[#061735]
-                sm:flex
-              "
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.15 }}
+              variants={stagger}
+              className="mx-auto mt-10 grid max-w-5xl gap-px overflow-hidden rounded-sm border border-white/10 bg-white/10 sm:grid-cols-2 lg:grid-cols-3"
             >
-              <ArrowUpRight
-                size={13}
-                strokeWidth={1.6}
-              />
-            </div>
+              {(reasons && reasons.length > 0
+                ? reasons.slice(0, 6)
+                : [
+                    {
+                      title: 'Field-first engineering',
+                      description:
+                        'Every recommendation is tested against real site conditions before it reaches a report.',
+                    },
+                    {
+                      title: 'Audit-ready documentation',
+                      description:
+                        'Reports built to the standard your inspectors and insurers expect, every time.',
+                    },
+                    {
+                      title: 'Zero-surprise scheduling',
+                      description:
+                        'We plan around your shutdown windows, not the other way around.',
+                    },
+                    {
+                      title: 'Calibrated equipment',
+                      description:
+                        'Testing instruments maintained and calibrated to national standards.',
+                    },
+                    {
+                      title: 'Experienced engineers',
+                      description:
+                        'Teams who have worked inside live plants, not just classrooms.',
+                    },
+                    {
+                      title: 'Pan-India response',
+                      description:
+                        'Crews mobilised to site locations across the country within days.',
+                    },
+                  ]
+              ).map((reason, index) => {
+                const title = Array.isArray(reason) ? reason[0] : reason.title
+                const description = Array.isArray(reason) ? reason[1] : reason.description
+                return (
+                  <motion.div
+                    key={`${title}-${index}`}
+                    variants={fadeUp}
+                    className="group flex flex-col justify-between bg-[#061735] p-8 transition-colors duration-300 hover:bg-[#0a2145] md:p-9"
+                  >
+                    <div>
+                      <h3 className="font-display text-lg font-semibold tracking-[-0.01em] text-white transition-colors duration-300 group-hover:text-[#29b6f6]">
+                        {title}
+                      </h3>
+                      <p className="mt-3 font-body text-sm leading-6 text-white/45">
+                        {description}
+                      </p>
+                    </div>
 
-          </motion.div>
-        )
-      })}
+                    <ArrowUpRight
+                      size={18}
+                      strokeWidth={1.5}
+                      className="mt-6 text-white/20 transition-colors duration-300 group-hover:text-[#29b6f6]"
+                    />
+                  </motion.div>
+                )
+              })}
+            </motion.div>
+          </div>
+        </section>
 
-    </motion.div>
-
-  </div>
-
-</section>
-
-         {/* =====================================================
+        {/* =====================================================
             CTA
         ====================================================== */}
 
         <section className="relative overflow-hidden bg-[#c8a45c]">
-
-          {/* CTA BACKGROUND IMAGE */}
-
           <img
             src="/assets/cta-background.png"
             alt=""
             aria-hidden="true"
             className="absolute inset-0 h-full w-full object-cover object-center"
           />
-
-          {/* Warm brand overlay */}
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 bg-[#c8a45c]/75 mix-blend-multiply"
-          />
-
-          {/* Readability gradient */}
+          <div aria-hidden="true" className="absolute inset-0 bg-[#c8a45c]/75 mix-blend-multiply" />
           <div
             aria-hidden="true"
             className="absolute inset-0 bg-gradient-to-r from-[#c8a45c]/95 via-[#c8a45c]/72 to-[#c8a45c]/30"
           />
 
-          {/* Engineering pattern */}
-          <div
-            aria-hidden="true"
-            className="
-              absolute
-              inset-0
-              opacity-[0.08]
-              bg-[linear-gradient(90deg,#000_1px,transparent_1px)]
-              bg-[size:90px_90px]
-            "
-          />
-
           <div className="site-container relative z-10 py-16 lg:py-20">
-
-            <div
-              className="
-                flex
-                flex-col
-                gap-10
-                lg:flex-row
-                lg:items-center
-                lg:justify-between
-              "
-            >
-
+            <div className="flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between">
               <div className="max-w-3xl">
-
-                <span
-                  className="
-                    font-mono
-                    text-[0.62rem]
-                    font-medium
-                    uppercase
-                    tracking-[0.22em]
-                    text-black/50
-                  "
-                >
+                <span className="font-body text-xs font-medium text-black/50">
                   Start a conversation
                 </span>
 
-                <h2
-                  className="
-                    mt-5
-                    font-display
-                    text-3xl
-                    font-bold
-                    leading-[1.05]
-                    tracking-[-0.04em]
-                    text-black
-                    md:text-5xl
-                  "
-                >
+                <h2 className="mt-5 font-display text-3xl font-bold leading-[1.05] tracking-[-0.04em] text-black md:text-5xl">
                   Have an electrical engineering requirement?
                 </h2>
 
-                <p
-                  className="
-                    mt-5
-                    max-w-2xl
-                    font-body
-                    text-base
-                    leading-7
-                    text-black/55
-                  "
-                >
-                  Tell us about your project, testing
-                  requirement or engineering challenge.
+                <p className="mt-5 max-w-2xl font-body text-base leading-7 text-black/55">
+                  Tell us about your project, testing requirement or
+                  engineering challenge.
                 </p>
-
               </div>
 
               <Link
                 to="/contact"
-                className="
-                  inline-flex
-                  shrink-0
-                  items-center
-                  justify-center
-                  gap-2
-                  rounded-sm
-                  bg-black
-                  px-7
-                  py-4
-                  font-body
-                  text-sm
-                  font-semibold
-                  tracking-wide
-                  text-white
-                  no-underline
-                  transition-all
-                  duration-300
-                  hover:bg-[#061735]
-                "
+                className="inline-flex shrink-0 items-center justify-center gap-2 rounded-sm bg-black px-7 py-4 font-body text-sm font-semibold tracking-wide text-white no-underline transition-all duration-300 hover:bg-[#061735]"
               >
                 Contact Electro Mech
-
-                <ArrowUpRight
-                  size={18}
-                  strokeWidth={1.7}
-                />
+                <ArrowUpRight size={18} strokeWidth={1.7} />
               </Link>
-
             </div>
-
           </div>
-
         </section>
 
       </main>

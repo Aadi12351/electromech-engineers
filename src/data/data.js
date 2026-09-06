@@ -1,69 +1,265 @@
 export const company = {
   name: 'Electro Mech Engineers',
-  tagline: 'Powering Industries with Precision, Protection & Performance',
+  tagline:
+    'Power system protection, testing & engineering services for industrial plants and utilities',
   descriptor: 'Electrical Consulting Engineers',
   email: 'info@electromechengineers.com',
   website: 'www.electromechengineers.com',
   phones: ['+91 22 2771 3245', '+91 98706 12345'],
-  address: 'Office No. 101, 1st Floor, Plot No. 45, Sector 6, Nerul (East), Navi Mumbai - 400706, Maharashtra, India',
+  address:
+    'Office No. 101, 1st Floor, Plot No. 45, Sector 6, Nerul (East), Navi Mumbai - 400706, Maharashtra, India',
   hours: 'Monday – Saturday · 9:00 AM – 6:00 PM',
 }
 
 export const stats = [
-  { value: 20, suffix: '+', label: 'Years of experience' },
-  { value: 20, suffix: '+', label: 'States covered' },
-  { value: 150, suffix: '+', label: 'Clients served' },
-  { value: 500, suffix: '+', label: 'Projects completed' },
+  {
+    value: '2005',
+    suffix: '',
+    label: 'Established',
+  },
+  {
+    value: 132,
+    suffix: ' kV',
+    label: 'Substation experience',
+  },
+  {
+    value: 200,
+    suffix: '+',
+    label: 'Industrial clients',
+  },
+  {
+    value: 'Pan India',
+    suffix: '',
+    label: 'Service coverage',
+  },
 ]
 
 export const services = [
-  { id: 'testing-commissioning', title: 'Testing & Commissioning', short: 'Protection systems, control & relay panels, switchgear, transformers and associated equipment up to 132kV.', icon: 'ClipboardCheck', image: '/assets/substation.jpg' },
-  { id: 'relay-protection', title: 'Relay Protection', short: 'Testing and commissioning of electromechanical, static and numerical protection relays with a focus on selectivity and fault isolation.', icon: 'ShieldCheck', image: '/assets/hero.jpg' },
-  { id: 'substation-engineering', title: 'Substation Engineering', short: 'End-to-end secondary system design, layout, engineering, cable scheduling, BOQ preparation and troubleshooting.', icon: 'TowerControl', image: '/assets/substation.jpg' },
-  { id: 'power-system-studies', title: 'Power System Studies', short: 'Load flow, short circuit, fault level, coordination, arc flash, stability and other network studies.', icon: 'Activity', image: '/assets/equipment.jpg' },
-  { id: 'design-consultancy', title: 'Design & Consultancy', short: 'Protection, control, SCADA integration, wiring diagrams, logic development and engineering advisory.', icon: 'DraftingCompass', image: '/assets/equipment.jpg' },
-  { id: 'maintenance-retrofitting', title: 'Maintenance & Retrofitting', short: 'Preventive maintenance, shutdown support, system health assessment and retrofit/upgrades for electrical systems.', icon: 'Wrench', image: '/assets/contact.jpg' },
-  { id: 'industrial-automation', title: 'Industrial Automation', short: 'Practical automation and control solutions aligned with industrial reliability, safety and operational continuity.', icon: 'Cog', image: '/assets/equipment.jpg' },
+  {
+    id: 'testing-commissioning',
+    title: 'Testing & Commissioning',
+    short:
+      'Testing and commissioning of protection relays, control & relay panels, switchgear, transformers, motors and substation equipment up to 132kV.',
+    icon: 'ClipboardCheck',
+    image: '/assets/substation.jpg',
+  },
+  {
+    id: 'relay-protection',
+    title: 'Relay Protection',
+    short:
+      'Testing of electromechanical and numerical protection relays, relay coordination and relay setting calculations for dependable protection systems.',
+    icon: 'ShieldCheck',
+    image: '/assets/service-relay.jpg',
+  },
+  {
+    id: 'substation-engineering',
+    title: 'Substation Engineering',
+    short:
+      'Electrical system design and engineering for power plants, industrial plants and substations, including layouts and cable schedules.',
+    icon: 'TowerControl',
+    image: '/assets/service-substation.jpg',
+  },
+  {
+    id: 'power-system-studies',
+    title: 'Power System Studies',
+    short:
+      'Load-flow studies, short-circuit studies, relay coordination studies, relay setting calculations and protection audits.',
+    icon: 'Activity',
+    image: '/assets/service-consulting.jpg',
+  },
+  {
+    id: 'design-consultancy',
+    title: 'Design & Consultancy',
+    short:
+      'Consultancy for protection, system studies and circuit modification, supported by practical electrical design and engineering experience.',
+    icon: 'DraftingCompass',
+    image: '/assets/equipment.jpg',
+  },
+  {
+    id: 'maintenance-retrofitting',
+    title: 'Maintenance & Retrofitting',
+    short:
+      'Maintenance, retrofitting and repair of indoor and outdoor substations, relays, panels, circuit breakers and switchgear equipment.',
+    icon: 'Wrench',
+    image: '/assets/service-maintenance.jpg',
+  },
 ]
 
 export const equipment = [
-  ['Micro Ohmmeter', 'High-precision low-resistance measurement for breakers, connectors, busbars and joints.'],
-  ['Transformer Turn Ratio Tester', 'Accurate measurement of turns ratio, phase displacement and excitation current.'],
-  ['Primary Current Injection Test Set', 'Used for testing and verifying protection systems, relays and circuit breakers.'],
-  ['SFRA Analyzer', 'Sweep Frequency Response Analysis for detecting mechanical deformation in transformers.'],
-  ['Thermal Imaging Camera', 'Detects hot spots and temperature anomalies in electrical equipment.'],
-  ['Power Quality Analyzer', 'Monitors harmonics, voltage fluctuation, imbalance and other power-quality parameters.'],
-  ['Protection Relay Test Kit', 'Comprehensive testing of numerical and electromechanical protection relays.'],
-  ['Tan Delta Test Set', 'Diagnostics for transformers, cables, bushings and rotating machines.'],
-  ['Insulation Resistance Tester', 'Measures insulation resistance of cables, motors, transformers and apparatus.'],
-  ['Engineering Software', 'Industry-leading software for power-system studies and relay coordination/design.'],
+  [
+    'Relay Testing Kit – Fully Automatic Universal',
+    'Computerised test set for protection relay testing.',
+  ],
+  [
+    'Relay Testing Kit – 0–100 A',
+    'Relay testing kit rated 0–100 A, 560 V AC and 350 V DC.',
+  ],
+  [
+    'Primary Kit – 0–2000 A',
+    'Primary current injection equipment for electrical testing applications.',
+  ],
+  [
+    'Contact Resistance Meter – 100 A DC',
+    'Make-Scope contact resistance measurement equipment.',
+  ],
+  [
+    'Breaker Time Interval Test Kit',
+    'Testing equipment for circuit-breaker operating time measurements.',
+  ],
+  [
+    'Energy Meter Calibrator – Kocos',
+    'Energy-meter calibration equipment.',
+  ],
+  [
+    'Transformer Testing Board',
+    'Testing board used for transformer-related electrical testing.',
+  ],
+  [
+    'Earth Megger – 4 Point & Clamp Meter',
+    'Earth resistance measurement using four-point and clamp methods.',
+  ],
+  [
+    'IR Tester',
+    'Insulation resistance testing equipment.',
+  ],
+  [
+    'Multi Meter',
+    'General-purpose electrical measurement instrument.',
+  ],
+  [
+    'Tong Tester',
+    'Clamp-type current measurement instrument.',
+  ],
+  [
+    'Leakage Tester',
+    'Equipment for electrical leakage testing.',
+  ],
+  [
+    'Dimmer – 1 Phase / 3 Phase',
+    'Single-phase and three-phase dimmer/testing equipment.',
+  ],
+  [
+    'Breaker Release Tester – Siemens & L&T',
+    'Breaker release testing equipment for Siemens and L&T breakers.',
+  ],
+  [
+    'Winding Resistance Meter',
+    'Winding resistance measurement equipment.',
+  ],
+  [
+    'Hi-Pot Test Kit – 20 kV',
+    'High-potential testing equipment rated up to 20 kV.',
+  ],
+  [
+    'Phase Sequence Meter',
+    'Instrument for phase-sequence verification.',
+  ],
 ]
 
 export const clients = [
-  'Adani Power', 'Tata Power', 'Larsen & Toubro', 'NTPC Limited', 'Reliance Industries', 'JSW Energy',
-  'Torrent Power', 'Vedanta Limited', 'Mahindra Lifespaces', 'Godrej Properties', 'UltraTech Cement', 'ACC Limited',
-  'Hindalco Industries', 'Steel Authority of India', 'Schneider Electric', 'Siemens', 'ABB India', 'Honeywell Automation',
-  'Kalpataru Power Transmission', 'Bharat Heavy Electricals',
+  'Hindustan Unilever',
+  'Aditya Birla Group',
+  'Essar',
+  'Reliance',
+  'Dabur',
+  'Bhilosa Industries',
+  'BARC',
+  'Barco',
+  'Four Seasons',
+  'Union Bank',
+  'L&T',
+  'Thermax',
+  'Sona Alloys',
+  'IFFCO',
+  'Jubilant Life Sciences',
+  'NPCIL',
+  'Naval Dockyard Mumbai',
+  'Indian Oil',
+  'Mahanagar Gas',
+  'Bharat Petroleum',
+  'Galaxy',
+  'HP',
+  'Schindler',
+  'Vinati Organics',
+  'HGS',
 ]
 
+/*
+ * Testimonials were not included in the original company profile.
+ * These are temporary placeholders.
+ *
+ * Replace the company, quote, person and role when approved
+ * client testimonials are received.
+ */
 export const reviews = [
-  { company: 'Adani Power', quote: 'Electro Mech Engineers has been a reliable partner for our critical electrical projects. Their technical expertise, timely execution and professionalism are truly commendable.', person: 'Mr. Rajeev Sharma', role: 'Head – Electrical Projects' },
-  { company: 'Tata Power', quote: 'We appreciate the team’s dedication and quality of work in testing & commissioning. Their attention to detail and safety standards is excellent.', person: 'Mr. Sandeep Kulkarni', role: 'AGM – Electrical Maintenance' },
-  { company: 'Larsen & Toubro', quote: 'Electro Mech Engineers delivers projects with high standards of engineering and safety. Their solutions are efficient, innovative and well-structured.', person: 'Mr. Amitabha Sengupta', role: 'Manager – Projects' },
-  { company: 'NTPC Limited', quote: 'Their testing equipment and reporting accuracy helped us ensure the reliability of our systems. Highly professional team with deep technical knowledge.', person: 'Mr. Manoj Kumar', role: 'DGM – Electrical Services' },
-  { company: 'Reliance Industries', quote: 'We are satisfied with the quality of service and the quick response from Electro Mech Engineers. They understand our requirements and deliver beyond expectations.', person: 'Mr. Parag Mehta', role: 'Senior Manager – Engineering' },
-  { company: 'JSW Energy', quote: 'Excellent coordination, technical expertise and commitment to timelines make them a trusted partner for our electrical engineering needs.', person: 'Mr. Girish Tanti', role: 'Head – Electrical Operations' },
+  {
+    company: 'Client testimonial — to be updated',
+    quote:
+      'Electro Mech has been a reliable partner for our critical electrical requirements. Their technical expertise, timely execution and professionalism are truly commendable.',
+    person: 'Client representative — to be updated',
+    role: 'Designation — to be updated',
+  },
+  {
+    company: 'Client testimonial — to be updated',
+    quote:
+      'We appreciate the team’s dedication and quality of work in testing and commissioning. Their attention to detail and safety standards are excellent.',
+    person: 'Client representative — to be updated',
+    role: 'Designation — to be updated',
+  },
+  {
+    company: 'Client testimonial — to be updated',
+    quote:
+      'Electro Mech delivers electrical engineering work with a strong focus on quality, safety and practical site requirements.',
+    person: 'Client representative — to be updated',
+    role: 'Designation — to be updated',
+  },
+  {
+    company: 'Client testimonial — to be updated',
+    quote:
+      'Their testing equipment, technical approach and reporting helped us assess the reliability of our electrical systems.',
+    person: 'Client representative — to be updated',
+    role: 'Designation — to be updated',
+  },
 ]
 
 export const reasons = [
-  ['Expertise', 'Highly skilled engineers with deep domain knowledge and hands-on experience.'],
-  ['Quality', 'Strict adherence to international standards, quality practices and calibrated instruments.'],
-  ['Safety', 'Safety is at the core of everything we do — protecting people, assets and the environment.'],
-  ['Reliability', 'Proven methodologies and advanced tools deliver dependable, accurate results.'],
-  ['Client Focus', 'Tailored solutions, transparent communication and continuous support.'],
-  ['Pan India Presence', 'A strong India-wide network with on-ground support teams across locations.'],
-  ['Service Excellence', 'End-to-end support from concept to commissioning with a focus on timely delivery.'],
-  ['Continuous Improvement', 'Ongoing improvement of processes and technologies to deliver better solutions.'],
+  [
+    'Testing Expertise',
+    'Experience in testing and commissioning protection relays, panels, switchgear, transformers, motors and substation equipment.',
+  ],
+  [
+    'Protection Focus',
+    'Practical experience in relay coordination, relay setting calculations and protection-system work.',
+  ],
+  [
+    'Field Engineering',
+    'Services built around the requirements of industrial plants, utilities and substations.',
+  ],
+  [
+    'Maintenance & Retrofitting',
+    'Maintenance, repair and retrofitting support for relays, panels, circuit breakers and switchgear.',
+  ],
+  [
+    'Design & Studies',
+    'Electrical design, layouts, cable schedules and power-system studies including load flow and short circuit studies.',
+  ],
+  [
+    'Pan India Exposure',
+    'Based in Mumbai with project exposure and service experience across India.',
+  ],
 ]
 
-export const locations = ['Delhi', 'Mumbai', 'Bengaluru', 'Chennai', 'Hyderabad', 'Kolkata', 'Ahmedabad', 'Pune', 'Lucknow', 'Chandigarh', 'Jaipur', 'Navi Mumbai']
+export const locations = [
+  'Delhi',
+  'Mumbai',
+  'Bengaluru',
+  'Chennai',
+  'Hyderabad',
+  'Kolkata',
+  'Ahmedabad',
+  'Pune',
+  'Lucknow',
+  'Chandigarh',
+  'Jaipur',
+  'Navi Mumbai',
+]

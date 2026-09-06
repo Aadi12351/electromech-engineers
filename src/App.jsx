@@ -5,6 +5,7 @@ import Header from './components/Header'
 import Footer from './components/Footer'
 import ScrollProgress from './components/ScrollProgress'
 import ScrollToTop from './components/ScrollToTop'
+import WhatsAppButton from './components/WhatsAppButton'
 
 import Home from './pages/Home'
 import About from './pages/About'
@@ -35,6 +36,9 @@ function App() {
       </Routes>
 
       <Footer />
+
+      {/* WhatsApp floating widget */}
+      <WhatsAppButton />
     </>
   )
 }

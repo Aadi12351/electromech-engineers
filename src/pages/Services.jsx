@@ -658,9 +658,9 @@ function Services() {
             SERVICES INTRO
         ========================================================== */}
 
-        <section className="bg-[#030208] py-24 md:py-28 lg:py-32">
+        <section className="bg-[#030208] py-16 md:py-20 lg:py-24">
 
-          <div className="site-container">
+          <div className="mx-auto w-full max-w-[1280px] px-6 lg:px-8 xl:px-4">
 
             <motion.div
               initial="hidden"
@@ -750,7 +750,7 @@ function Services() {
                 ALTERNATING SERVICE SECTIONS
             ====================================================== */}
 
-            <div className="mt-24 space-y-28 md:mt-32 md:space-y-36">
+            <div className="mt-16 space-y-20 md:mt-20 md:space-y-24">
 
               {services.map((service, index) => (
 
@@ -773,9 +773,9 @@ function Services() {
             WHERE WE WIN — STICKY EDITORIAL CLIENT SECTION
         ========================================================== */}
 
-        <section className="bg-[#f5f4f1] py-24 text-[#241337] md:py-32 lg:py-40">
+        <section className="bg-[#f5f4f1] py-16 text-[#241337] md:py-20 lg:py-24">
 
-          <div className="site-container">
+          <div className="mx-auto w-full max-w-[1280px] px-6 lg:px-8 xl:px-4">
 
             <div className="grid gap-16 lg:grid-cols-[0.78fr_1.22fr] lg:gap-20 xl:grid-cols-[0.72fr_1.28fr] xl:gap-28">
 
@@ -903,7 +903,7 @@ function Services() {
                   RIGHT SCROLLING COLUMN
               ====================================================== */}
 
-              <div className="space-y-16">
+              <div className="space-y-12 md:space-y-14">
 
                 {clients.map((client, index) => {
 
@@ -1135,12 +1135,12 @@ function Services() {
             border-y
             border-white/10
             bg-[#061735]
-            py-20
-            md:py-24
+            py-16
+            md:py-20
           "
         >
 
-          <div className="site-container">
+          <div className="mx-auto w-full max-w-[1280px] px-6 lg:px-8 xl:px-4">
 
             <div
               className="
