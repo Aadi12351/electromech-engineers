@@ -32,6 +32,7 @@ function PageHero({
   title,
   copy,
   image,
+  imageAlt,
 }) {
   return (
     <section
@@ -55,8 +56,7 @@ function PageHero({
 
         <img
           src={image}
-          alt=""
-          aria-hidden="true"
+          alt={imageAlt || `${title} — Electro Mech Engineers`}
           className="
             h-full
             w-full

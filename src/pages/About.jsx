@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Helmet } from 'react-helmet-async'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   ArrowRight,
@@ -27,6 +26,7 @@ import {
 } from '../data/data'
 
 import PageHero from '../components/PageHero'
+import SEO from '../components/SEO'
 
 /* =========================================================
    ANIMATION
@@ -172,20 +172,18 @@ function About() {
 
   return (
     <>
-      <Helmet>
-        <title>About Electro Mech Engineers | Electrical Engineering</title>
-        <meta
-          name="description"
-          content="Electro Mech Engineers, founded in 2005, is a Mumbai-based power system protection service provider offering testing, commissioning, retrofitting and consultancy to over 200 industrial clients across India."
-        />
-        <meta
-          name="keywords"
-          content="about Electro Mech Engineers, electrical consulting engineers, power system protection, relay testing, Mumbai, Mulund"
-        />
-        <meta property="og:title" content="About Electro Mech Engineers" />
-        <meta property="og:description" content={company.tagline} />
-        <meta property="og:type" content="website" />
-      </Helmet>
+<SEO
+        title="About Electro Mech Engineers | Electrical Engineering Consultants Mumbai"
+        description="Learn about Electro Mech Engineers, a Mumbai-based electrical engineering and testing firm providing protection, relay coordination, commissioning and power-system engineering services across India."
+        path="/about"
+        image="/assets/about.png"
+        keywords={[
+          'electrical engineering consultants Mumbai',
+          'power system protection engineers India',
+          'electrical testing consultants',
+          'substation commissioning engineers',
+        ]}
+      />
 
       <main className="overflow-hidden bg-white">
 
@@ -198,6 +196,7 @@ function About() {
           title="Power system protection, since 2005."
           copy="A Mumbai-based electrical consulting firm providing testing, commissioning, protection and engineering services to industrial plants and utilities across India."
           image="/assets/about.png"
+          imageAlt="Electrical engineering and industrial power infrastructure in Mumbai"
         />
 
         {/* =========================================================
@@ -268,6 +267,7 @@ function About() {
                       src={image.src}
                       alt={image.alt}
                       loading="lazy"
+                    decoding="async"
                       className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
                     />
                   </motion.div>
@@ -433,9 +433,10 @@ function About() {
 
               <motion.div variants={fadeUp} className="relative min-h-[460px] overflow-hidden">
                 <img
-                  src="/assets/owners.png"
-                  alt="Mukund, Founder of Electro Mech Engineers"
+                  src="https://images.unsplash.com/photo-1758101755915-462eddc23f57?auto=format&fit=crop&w=1600&q=85"
+                  alt="Electrical engineer testing an industrial control panel with a multimeter"
                   loading="lazy"
+                    decoding="async"
                   className="h-full w-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#050f23] via-transparent to-transparent" />
@@ -669,8 +670,7 @@ function About() {
                 >
                   <img
                     src="/assets/service-locations-map.png"
-                    alt=""
-                    aria-hidden="true"
+                    alt="Map illustrating Electro Mech Engineers service coverage across major Indian cities"
                     className="absolute inset-0 h-full w-full object-cover object-right"
                   />
 

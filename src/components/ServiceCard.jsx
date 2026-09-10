@@ -59,6 +59,7 @@ function ServiceCard({
           src={service.image}
           alt={service.title}
           loading="lazy"
+                    decoding="async"
           className="
             h-full
             w-full

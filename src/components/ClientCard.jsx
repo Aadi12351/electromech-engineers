@@ -20,7 +20,9 @@ const fadeUp = {
 
 function ClientCard({
   name,
+  logo,
   index = 0,
+  total = 28,
 }) {
   return (
     <motion.article
@@ -28,7 +30,9 @@ function ClientCard({
       className="
         group
         relative
-        min-h-[230px]
+        flex
+        min-h-[340px]
+        flex-col
         overflow-hidden
         border
         border-[#061735]/10
@@ -39,11 +43,14 @@ function ClientCard({
         hover:-translate-y-1
         hover:border-[#c8a45c]/50
         hover:shadow-[0_20px_50px_rgba(6,23,53,0.08)]
-        md:min-h-[250px]
+        md:min-h-[360px]
         md:p-8
       "
     >
-      {/* Subtle technical grid */}
+      {/* =========================================================
+          SUBTLE TECHNICAL GRID
+      ========================================================== */}
+
       <div
         aria-hidden="true"
         className="
@@ -59,9 +66,14 @@ function ClientCard({
         "
       />
 
-      {/* Top technical line */}
-      <div className="relative z-10 flex items-start justify-between">
+      {/* =========================================================
+          TOP TECHNICAL HEADER
+      ========================================================== */}
+
+      <div className="relative z-10 flex shrink-0 items-start justify-between">
+
         <div className="flex items-center gap-3">
+
           <span
             className="
               font-mono
@@ -87,6 +99,7 @@ function ClientCard({
           >
             {String(index + 1).padStart(2, '0')}
           </span>
+
         </div>
 
         <div
@@ -94,6 +107,7 @@ function ClientCard({
             flex
             h-9
             w-9
+            shrink-0
             items-center
             justify-center
             border
@@ -117,13 +131,88 @@ function ClientCard({
             "
           />
         </div>
+
       </div>
 
-      {/* Client identity */}
-      <div className="relative z-10 mt-16">
+      {/* =========================================================
+          CLIENT LOGO
+      ========================================================== */}
+
+      <div
+        className="
+          relative
+          z-10
+          mt-8
+          flex
+          h-24
+          shrink-0
+          w-full
+          items-center
+          justify-center
+          border-y
+          border-[#061735]/[0.07]
+          bg-[#fbfcfd]
+          px-6
+          py-3
+        "
+      >
+
+        {logo ? (
+          <img
+            src={logo}
+            alt={`${name} logo`}
+            loading="lazy"
+            decoding="async"
+            referrerPolicy="no-referrer"
+            className="
+              max-h-[72px]
+              max-w-[85%]
+              object-contain
+            "
+            onError={(event) => {
+              event.currentTarget.style.display = 'none'
+
+              const fallback =
+                event.currentTarget.nextElementSibling
+
+              if (fallback) {
+                fallback.classList.remove('hidden')
+              }
+            }}
+          />
+        ) : null}
+
+        {/* Logo fallback */}
+
+        <span
+          className={`
+            ${logo ? 'hidden' : ''}
+            text-center
+            font-display
+            text-base
+            font-semibold
+            leading-tight
+            tracking-[-0.025em]
+            text-[#061735]/70
+          `}
+        >
+          {name}
+        </span>
+
+      </div>
+
+      {/* =========================================================
+          CLIENT IDENTITY
+          ---------------------------------------------------------
+          flex-1 allows this section to consume available space
+          without overlapping the metadata below.
+      ========================================================== */}
+
+      <div className="relative z-10 mt-7 flex-1">
+
         <span
           className="
-            mb-5
+            mb-4
             block
             h-[2px]
             w-8
@@ -136,40 +225,47 @@ function ClientCard({
 
         <h3
           className="
-            max-w-[92%]
+            max-w-full
             font-display
-            text-[1.35rem]
+            text-[1.25rem]
             font-semibold
-            leading-[1.05]
+            leading-[1.08]
             tracking-[-0.035em]
             text-[#061735]
             transition-colors
             duration-300
             group-hover:text-[#168fd0]
-            md:text-[1.55rem]
+            md:text-[1.4rem]
           "
         >
           {name}
         </h3>
+
       </div>
 
-      {/* Bottom metadata */}
+      {/* =========================================================
+          BOTTOM METADATA
+          ---------------------------------------------------------
+          IMPORTANT:
+          This is now normal document flow instead of absolute.
+          This prevents long company names from overlapping.
+      ========================================================== */}
+
       <div
         className="
-          absolute
-          bottom-7
-          left-7
-          right-7
+          relative
           z-10
+          mt-7
           flex
+          shrink-0
           items-end
           justify-between
-          md:bottom-8
-          md:left-8
-          md:right-8
+          gap-4
         "
       >
-        <div className="flex flex-col gap-1">
+
+        <div className="flex min-w-0 flex-col gap-1">
+
           <span
             className="
               font-mono
@@ -194,10 +290,12 @@ function ClientCard({
           >
             Electrical Engineering
           </span>
+
         </div>
 
         <span
           className="
+            shrink-0
             font-mono
             text-[0.55rem]
             tracking-[0.18em]
@@ -207,11 +305,15 @@ function ClientCard({
             group-hover:text-[#c8a45c]
           "
         >
-          {String(index + 1).padStart(2, '0')} / 20
+          {String(index + 1).padStart(2, '0')} / {total}
         </span>
+
       </div>
 
-      {/* Bottom gold progress line */}
+      {/* =========================================================
+          BOTTOM GOLD PROGRESS LINE
+      ========================================================== */}
+
       <span
         aria-hidden="true"
         className="
@@ -227,7 +329,10 @@ function ClientCard({
         "
       />
 
-      {/* Corner accent */}
+      {/* =========================================================
+          CORNER ACCENT
+      ========================================================== */}
+
       <span
         aria-hidden="true"
         className="
@@ -244,6 +349,7 @@ function ClientCard({
           group-hover:border-[#c8a45c]/30
         "
       />
+
     </motion.article>
   )
 }

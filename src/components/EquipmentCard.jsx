@@ -19,6 +19,14 @@ const fadeUp = {
   },
 }
 
+
+const equipmentImages = [
+  'https://images.unsplash.com/photo-1758101755915-462eddc23f57?auto=format&fit=crop&w=1200&q=85',
+  'https://images.unsplash.com/photo-1755407454675-454d6ed4c1bc?auto=format&fit=crop&w=1200&q=85',
+  'https://images.unsplash.com/photo-1775519519950-9c48495b5488?auto=format&fit=crop&w=1200&q=85',
+  'https://images.unsplash.com/photo-1780396140802-52309c205050?auto=format&fit=crop&w=1200&q=85',
+]
+
 const equipmentIcons = [
   'Gauge',
   'Activity',
@@ -69,6 +77,17 @@ function EquipmentCard({
         md:p-8
       "
     >
+
+      <div className="relative -mx-7 -mt-7 mb-7 h-44 overflow-hidden md:-mx-8 md:-mt-8">
+        <img
+          src={equipmentImages[index % equipmentImages.length]}
+          alt={`${name} — electrical testing equipment visual reference`}
+          loading="lazy"
+          decoding="async"
+          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+        />
+        <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-[#061735]/75 via-transparent to-transparent" />
+      </div>
 
       {/* =====================================
           TOP NUMBER

@@ -184,6 +184,7 @@ function Header() {
           ====================================================== */}
 
           <nav
+            aria-label="Primary navigation"
             className="
               ml-auto
               hidden

@@ -1,6 +1,5 @@
 import React from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { Helmet } from 'react-helmet-async'
 import { motion } from 'framer-motion'
 import {
   ArrowRight,
@@ -18,6 +17,7 @@ import {
 } from '../data/data'
 
 import PageHero from '../components/PageHero'
+import SEO from '../components/SEO'
 import SectionIntro from '../components/SectionIntro'
 
 const fadeUp = {
@@ -108,38 +108,21 @@ function ServiceDetail() {
 
   return (
     <>
-      <Helmet>
-        <title>
-          {service.title} | Electro Mech Engineers
-        </title>
-
-        <meta
-          name="description"
-          content={`${service.short} Electro Mech Engineers provides electrical engineering solutions with a focus on precision, protection, safety and dependable performance.`}
-        />
-
-        <meta
-          name="keywords"
-          content={`${service.title}, electrical engineering, Electro Mech Engineers, electrical testing, commissioning, power systems, Navi Mumbai`}
-        />
-
-        <meta
-          property="og:title"
-          content={`${service.title} | Electro Mech Engineers`}
-        />
-
-        <meta
-          property="og:description"
-          content={service.short}
-        />
-
-        <meta property="og:type" content="website" />
-
-        <meta
-          property="og:url"
-          content={`https://www.electromechengineers.com/services/${service.id}`}
-        />
-      </Helmet>
+      <SEO
+        title={`${service.title} | Electro Mech Engineers | Mumbai`}
+        description={`${service.short} Electro Mech Engineers provides industrial electrical testing, protection engineering and commissioning support from Mumbai across India.`}
+        path={`/services/${service.id}`}
+        image={service.image}
+        keywords={[
+          service.title,
+          `${service.title} Mumbai`,
+          'industrial electrical testing',
+          'numerical relay coordination',
+          'substation commissioning up to 132kV',
+          'relay setting calculations',
+        ]}
+        service={service}
+      />
 
       <main className="overflow-hidden">
         {/* =========================================================
@@ -151,6 +134,7 @@ function ServiceDetail() {
           title={service.title}
           copy={service.short}
           image={service.image}
+          imageAlt={`${service.title} — electrical engineering service by Electro Mech Engineers`}
         />
 
         {/* =========================================================
@@ -221,6 +205,7 @@ function ServiceDetail() {
                     src={service.image}
                     alt={service.title}
                     loading="lazy"
+                    decoding="async"
                     className="h-full min-h-[500px] w-full object-cover transition-transform duration-700 hover:scale-[1.03]"
                   />
 

@@ -40,6 +40,7 @@ export const services = [
     title: 'Testing & Commissioning',
     short:
       'Testing and commissioning of protection relays, control & relay panels, switchgear, transformers, motors and substation equipment up to 132kV.',
+    schemaType: 'Electrical testing and commissioning',
     icon: 'ClipboardCheck',
     image: '/assets/substation.jpg',
   },
@@ -48,6 +49,7 @@ export const services = [
     title: 'Relay Protection',
     short:
       'Testing of electromechanical and numerical protection relays, relay coordination and relay setting calculations for dependable protection systems.',
+    schemaType: 'Protection relay testing and numerical relay coordination',
     icon: 'ShieldCheck',
     image: '/assets/service-relay.jpg',
   },
@@ -56,6 +58,7 @@ export const services = [
     title: 'Substation Engineering',
     short:
       'Electrical system design and engineering for power plants, industrial plants and substations, including layouts and cable schedules.',
+    schemaType: 'Substation engineering and commissioning',
     icon: 'TowerControl',
     image: '/assets/service-substation.jpg',
   },
@@ -64,6 +67,7 @@ export const services = [
     title: 'Power System Studies',
     short:
       'Load-flow studies, short-circuit studies, relay coordination studies, relay setting calculations and protection audits.',
+    schemaType: 'Power system studies and protection coordination',
     icon: 'Activity',
     image: '/assets/service-consulting.jpg',
   },
@@ -72,6 +76,7 @@ export const services = [
     title: 'Design & Consultancy',
     short:
       'Consultancy for protection, system studies and circuit modification, supported by practical electrical design and engineering experience.',
+    schemaType: 'Electrical design and consultancy',
     icon: 'DraftingCompass',
     image: '/assets/equipment.jpg',
   },
@@ -80,6 +85,7 @@ export const services = [
     title: 'Maintenance & Retrofitting',
     short:
       'Maintenance, retrofitting and repair of indoor and outdoor substations, relays, panels, circuit breakers and switchgear equipment.',
+    schemaType: 'Electrical maintenance and retrofitting',
     icon: 'Wrench',
     image: '/assets/service-maintenance.jpg',
   },

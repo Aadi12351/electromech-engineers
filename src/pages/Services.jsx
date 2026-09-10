@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { Helmet } from 'react-helmet-async'
+import SEO from '../components/SEO'
 import { motion } from 'framer-motion'
 import { ArrowUpRight, ArrowRight, ArrowDown } from 'lucide-react'
 
@@ -98,6 +98,7 @@ function ServiceFeature({
             src={image}
             alt={service.title}
             loading="lazy"
+                    decoding="async"
             className="
               h-full
               w-full
@@ -431,33 +432,19 @@ function ServiceFeature({
 function Services() {
   return (
     <>
-      <Helmet>
-
-        <title>
-          Electrical Engineering Services | Electro Mech Engineers
-        </title>
-
-        <meta
-          name="description"
-          content="Explore the electrical engineering services offered by Electro Mech Engineers, including testing, protection, substation engineering, studies, design, maintenance and automation."
-        />
-
-        <meta
-          property="og:title"
-          content="Electrical Engineering Services | Electro Mech Engineers"
-        />
-
-        <meta
-          property="og:description"
-          content={company.tagline}
-        />
-
-        <meta
-          property="og:type"
-          content="website"
-        />
-
-      </Helmet>
+<SEO
+        title="Electrical Testing & Commissioning Services | Electro Mech Engineers"
+        description="Industrial electrical testing, numerical relay testing and coordination, protection engineering, power system studies and substation commissioning up to 132kV from Electro Mech Engineers, Mumbai."
+        path="/services"
+        image="/assets/substation.png"
+        keywords={[
+          'electrical testing and commissioning services',
+          'numerical relay coordination',
+          'relay setting calculations',
+          '132kV substation commissioning',
+          'industrial electrical testing India',
+        ]}
+      />
 
 
       <main className="bg-[#030208] text-white">
@@ -477,8 +464,7 @@ function Services() {
 
           <img
             src="/assets/about.png"
-            alt=""
-            aria-hidden="true"
+            alt="Industrial electrical engineering and substation infrastructure"
             className="
               absolute
               inset-0
@@ -958,6 +944,7 @@ function Services() {
                             alt=""
                             aria-hidden="true"
                             loading="lazy"
+                    decoding="async"
                             className="
                               h-full
                               w-full

@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Helmet } from 'react-helmet-async'
 import { motion } from 'framer-motion'
 import {
   ArrowUpRight,
@@ -20,6 +19,7 @@ import {
 } from '../data/data'
 
 import PageHero from '../components/PageHero'
+import SEO from '../components/SEO'
 
 const fadeUp = {
   hidden: {
@@ -82,38 +82,18 @@ ${message}
 
   return (
     <>
-      <Helmet>
-        <title>
-          Contact Electro Mech Engineers | Electrical Engineering
-        </title>
-
-        <meta
-          name="description"
-          content="Contact Electro Mech Engineers for electrical testing, commissioning, relay protection, substation engineering, power system studies, automation and maintenance requirements."
-        />
-
-        <meta
-          name="keywords"
-          content="contact Electro Mech Engineers, electrical engineering consultancy, electrical testing Navi Mumbai, commissioning services, electrical engineers India"
-        />
-
-        <meta
-          property="og:title"
-          content="Contact Electro Mech Engineers"
-        />
-
-        <meta
-          property="og:description"
-          content={company.tagline}
-        />
-
-        <meta property="og:type" content="website" />
-
-        <meta
-          property="og:url"
-          content="https://www.electromechengineers.com/contact"
-        />
-      </Helmet>
+<SEO
+        title="Contact Electro Mech Engineers | Electrical Testing & Commissioning Mumbai"
+        description="Contact Electro Mech Engineers in Navi Mumbai for industrial electrical testing, numerical relay coordination, relay setting calculations, power system studies and substation commissioning up to 132kV."
+        path="/contact"
+        image="/assets/contact.png"
+        keywords={[
+          'electrical testing company Navi Mumbai',
+          'relay coordination consultants Mumbai',
+          '132kV commissioning services Mumbai',
+          'electrical engineering consultancy Maharashtra',
+        ]}
+      />
 
       <main className="overflow-hidden">
         {/* =========================================================
@@ -125,6 +105,7 @@ ${message}
           title="Let's engineer what comes next."
           copy="Share your requirement and the team can take it from there."
           image="/assets/contact.png"
+          imageAlt="Electro Mech Engineers electrical engineering office and industrial project contact"
         />
 
         {/* =========================================================
@@ -570,6 +551,7 @@ ${message}
                 title="Electro Mech Engineers location"
                 src="https://www.google.com/maps?q=Electro%20Mech%20Engineers%20Nerul%20Navi%20Mumbai&output=embed"
                 loading="lazy"
+                    decoding="async"
                 referrerPolicy="no-referrer-when-downgrade"
                 className="h-[420px] w-full border-0 grayscale-[0.35] md:h-[500px]"
               />

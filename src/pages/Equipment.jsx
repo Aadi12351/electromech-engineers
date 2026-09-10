@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Helmet } from 'react-helmet-async'
 import { motion } from 'framer-motion'
 import {
   ArrowRight,
@@ -19,6 +18,7 @@ import {
 } from '../data/data'
 
 import PageHero from '../components/PageHero'
+import SEO from '../components/SEO'
 import SectionIntro from '../components/SectionIntro'
 import EquipmentCard from '../components/EquipmentCard'
 
@@ -90,38 +90,19 @@ function Equipment() {
 
   return (
     <>
-      <Helmet>
-        <title>
-          Testing Equipment | Electro Mech Engineers
-        </title>
-
-        <meta
-          name="description"
-          content="Explore electrical testing and diagnostic equipment used by Electro Mech Engineers for transformer testing, protection systems, power quality, insulation testing and electrical diagnostics."
-        />
-
-        <meta
-          name="keywords"
-          content="electrical testing equipment, relay test kit, micro ohmmeter, transformer turns ratio tester, SFRA analyzer, power quality analyzer, tan delta testing, insulation resistance tester"
-        />
-
-        <meta
-          property="og:title"
-          content="Testing Equipment | Electro Mech Engineers"
-        />
-
-        <meta
-          property="og:description"
-          content={company.tagline}
-        />
-
-        <meta property="og:type" content="website" />
-
-        <meta
-          property="og:url"
-          content="https://www.electromechengineers.com/equipment"
-        />
-      </Helmet>
+<SEO
+        title="Electrical Testing Equipment | Electro Mech Engineers"
+        description="Explore relay test kits, primary injection equipment, contact resistance meters, breaker timing testers, insulation resistance testers and other electrical testing instruments used by Electro Mech Engineers."
+        path="/equipment"
+        image="/assets/Equipmensts_hero.png"
+        keywords={[
+          'relay testing equipment',
+          'primary injection test kit',
+          'breaker timing test kit',
+          'contact resistance meter',
+          'electrical testing instruments India',
+        ]}
+      />
 
       <main className="overflow-hidden">
         {/* =========================================================
@@ -133,6 +114,7 @@ function Equipment() {
           title="Advanced tools. Accurate decisions."
           copy="A practical toolkit for testing, diagnostics, commissioning and engineering verification."
           image="/assets/Equipmensts_hero.png"
+          imageAlt="Electrical testing and diagnostic equipment used for power-system commissioning"
         />
 
         {/* =========================================================
@@ -362,6 +344,7 @@ function Equipment() {
                     src="/assets/equipment.jpg"
                     alt="Electrical testing and diagnostic equipment"
                     loading="lazy"
+                    decoding="async"
                     className="h-full min-h-[500px] w-full object-cover transition-transform duration-700 hover:scale-[1.03]"
                   />
 

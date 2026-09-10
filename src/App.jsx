@@ -1,5 +1,5 @@
 import React from 'react'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 
 import Header from './components/Header'
 import Footer from './components/Footer'
@@ -32,7 +32,7 @@ function App() {
         <Route path="/clients" element={<Clients />} />
         <Route path="/contact" element={<Contact />} />
 
-        <Route path="*" element={<Home />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
 
       <Footer />

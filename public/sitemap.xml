@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://www.electromechengineers.com/</loc></url>
+  <url><loc>https://www.electromechengineers.com/about</loc></url>
   <url><loc>https://www.electromechengineers.com/services</loc></url>
+  <url><loc>https://www.electromechengineers.com/services/testing-commissioning</loc></url>
+  <url><loc>https://www.electromechengineers.com/services/relay-protection</loc></url>
+  <url><loc>https://www.electromechengineers.com/services/substation-engineering</loc></url>
+  <url><loc>https://www.electromechengineers.com/services/power-system-studies</loc></url>
+  <url><loc>https://www.electromechengineers.com/services/design-consultancy</loc></url>
+  <url><loc>https://www.electromechengineers.com/services/maintenance-retrofitting</loc></url>
   <url><loc>https://www.electromechengineers.com/equipment</loc></url>
   <url><loc>https://www.electromechengineers.com/clients</loc></url>
-  <url><loc>https://www.electromechengineers.com/about</loc></url>
   <url><loc>https://www.electromechengineers.com/contact</loc></url>
 </urlset>

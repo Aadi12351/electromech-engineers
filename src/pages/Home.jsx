@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
-import { Helmet } from 'react-helmet-async'
+import SEO from '../components/SEO'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   ArrowLeft,
@@ -18,7 +18,6 @@ import {
 import {
   company,
   stats,
-  clients,
   reasons,
   services,
   reviews,
@@ -54,13 +53,128 @@ const getStat = (stat) => {
   return { value: stat?.value, suffix: stat?.suffix || '', label: stat?.label }
 }
 
-const getClientName = (client) => {
-  if (Array.isArray(client)) return client[0]
-  if (typeof client === 'object' && client !== null) {
-    return client.name || client.title || client.label
-  }
-  return client
-}
+/* =========================================================
+   CLIENT REFERENCES
+   ---------------------------------------------------------
+   These are the company references used on the Home page.
+   Replace the logo URLs later with your approved local
+   high-resolution logo assets if required.
+========================================================= */
+
+const clientReferences = [
+  {
+    name: 'Hindustan Unilever Limited',
+    logo: 'https://www.google.com/s2/favicons?domain=hul.co.in&sz=128',
+  },
+  {
+    name: 'Aditya Birla Group',
+    logo: 'https://www.google.com/s2/favicons?domain=adityabirla.com&sz=128',
+  },
+  {
+    name: 'Essar',
+    logo: 'https://www.google.com/s2/favicons?domain=essar.com&sz=128',
+  },
+  {
+    name: 'Reliance',
+    logo: 'https://www.google.com/s2/favicons?domain=reliance.com&sz=128',
+  },
+  {
+    name: 'Dabur',
+    logo: 'https://www.google.com/s2/favicons?domain=dabur.com&sz=128',
+  },
+  {
+    name: 'Bhilosa Industries',
+    logo: 'https://www.google.com/s2/favicons?domain=bhilosa.com&sz=128',
+  },
+  {
+    name: 'BARC',
+    logo: 'https://www.google.com/s2/favicons?domain=barc.gov.in&sz=128',
+  },
+  {
+    name: 'Barco',
+    logo: 'https://www.google.com/s2/favicons?domain=barco.com&sz=128',
+  },
+  {
+    name: 'Four Seasons Hotel',
+    logo: 'https://www.google.com/s2/favicons?domain=fourseasons.com&sz=128',
+  },
+  {
+    name: 'Union Bank',
+    logo: 'https://www.google.com/s2/favicons?domain=unionbankofindia.bank.in&sz=128',
+  },
+  {
+    name: 'Larsen & Toubro',
+    logo: 'https://www.google.com/s2/favicons?domain=larsentoubro.com&sz=128',
+  },
+  {
+    name: 'Thermax Limited',
+    logo: 'https://www.google.com/s2/favicons?domain=thermaxglobal.com&sz=128',
+  },
+  {
+    name: 'Sona Alloys Private Limited',
+    logo: 'https://placehold.co/128x128/f8f9fb/061735?text=SA',
+  },
+  {
+    name: 'IFFCO',
+    logo: 'https://www.google.com/s2/favicons?domain=iffco.in&sz=128',
+  },
+  {
+    name: 'Maharashtra Industrial Development Corporation',
+    logo: 'https://www.google.com/s2/favicons?domain=midcindia.org&sz=128',
+  },
+  {
+    name: 'Jubilant Life Sciences',
+    logo: 'https://www.google.com/s2/favicons?domain=jubilant.com&sz=128',
+  },
+  {
+    name: 'NPCIL',
+    logo: 'https://www.google.com/s2/favicons?domain=npcil.nic.in&sz=128',
+  },
+  {
+    name: 'Naval Dockyard Mumbai',
+    logo: 'https://www.google.com/s2/favicons?domain=indiannavy.nic.in&sz=128',
+  },
+  {
+    name: 'Sahakarmaharshi Bhausaheb Thorat Sahakari Sakhar Karkhana Ltd.',
+    logo: 'https://placehold.co/128x128/f8f9fb/061735?text=BT',
+  },
+  {
+    name: 'Shri Dnyaneshwar Sahakari Sakhar Karkhana Ltd.',
+    logo: 'https://placehold.co/128x128/f8f9fb/061735?text=SD',
+  },
+  {
+    name: 'Hinduja Global Solutions',
+    logo: 'https://www.google.com/s2/favicons?domain=hgs.cx&sz=128',
+  },
+  {
+    name: 'Vinati Organics Limited',
+    logo: 'https://www.google.com/s2/favicons?domain=vinatiorganics.com&sz=128',
+  },
+  {
+    name: 'IndianOil',
+    logo: 'https://www.google.com/s2/favicons?domain=iocl.com&sz=128',
+  },
+  {
+    name: 'Mahanagar Gas',
+    logo: 'https://www.google.com/s2/favicons?domain=mahanagargas.com&sz=128',
+  },
+  {
+    name: 'Bharat Petroleum',
+    logo: 'https://www.google.com/s2/favicons?domain=bpcl.in&sz=128',
+  },
+  {
+    name: 'Galaxy',
+    logo: 'https://www.google.com/s2/favicons?domain=galaxysurfactants.com&sz=128',
+  },
+  {
+    name: 'Hindustan Petroleum',
+    logo: 'https://www.google.com/s2/favicons?domain=hindustanpetroleum.com&sz=128',
+  },
+  {
+    name: 'Schindler',
+    logo: 'https://www.google.com/s2/favicons?domain=schindler.com&sz=128',
+  },
+]
 
 /* =========================================================
    SERVICE ICONS
@@ -131,7 +245,7 @@ function ServiceCarousel() {
           const Icon = serviceIcons[service.icon] || Zap
           return (
             <article
-              key={service.key}
+              key={service.id}
               className="group relative min-w-[82vw] shrink-0 snap-start overflow-hidden rounded-sm bg-[#061735] sm:min-w-[360px] lg:min-w-[calc((100%-60px)/4)]"
             >
               <div className="relative h-[520px]">
@@ -153,7 +267,7 @@ function ServiceCarousel() {
                   </h3>
 
                   <p className="mt-4 max-w-[320px] font-body text-sm leading-6 text-white/65">
-                    {service.description}
+                    {service.short}
                   </p>
 
                   <Link
@@ -178,7 +292,7 @@ function ServiceCarousel() {
         <div className="flex items-center gap-2.5">
           {services.map((service, index) => (
             <button
-              key={service.key}
+              key={service.id}
               type="button"
               aria-label={`Go to ${service.title}`}
               onClick={() => scrollToIndex(index)}
@@ -327,20 +441,19 @@ function TestimonialSlider() {
 function Home() {
   return (
     <>
-      <Helmet>
-        <title>{company.name} | Electrical Consulting Engineers</title>
-        <meta
-          name="description"
-          content={`${company.name} — ${company.tagline}. Electrical consulting, testing, protection and engineering services.`}
-        />
-        <meta
-          name="keywords"
-          content="electrical consulting engineers, electrical testing, protection relay testing, transformer testing, power systems, India"
-        />
-        <meta property="og:title" content={`${company.name} | Electrical Consulting Engineers`} />
-        <meta property="og:description" content={company.tagline} />
-        <meta property="og:type" content="website" />
-      </Helmet>
+<SEO
+        title="Electro Mech Engineers | Industrial Electrical Testing & Commissioning Mumbai"
+        description="Electro Mech Engineers is a Mumbai-based electrical engineering consultancy specialising in industrial electrical testing, protection relay testing, numerical relay coordination, power system studies and substation commissioning up to 132kV across India."
+        path="/"
+        image="/assets/hero.jpg"
+        keywords={[
+          'industrial electrical testing Mumbai',
+          'electrical testing company Mumbai',
+          'substation commissioning 132kV',
+          'numerical relay coordination India',
+          'electrical protection engineering',
+        ]}
+      />
 
       <main className="overflow-hidden">
 
@@ -403,7 +516,7 @@ function Home() {
                   className="mt-8 flex flex-col gap-7 md:flex-row md:items-end md:gap-12"
                 >
                   <p className="max-w-xl font-body text-[0.95rem] leading-7 text-white/60 md:text-base">
-                    {company.tagline}
+                    {company.tagline} Industrial electrical testing, numerical relay coordination and substation commissioning up to 132kV are delivered from our Mumbai base across India.
                   </p>
 
                   <div className="flex shrink-0 items-center gap-6">
@@ -693,10 +806,13 @@ function Home() {
         </section>
 
         {/* =====================================================
-            CLIENTS
+            CLIENT REFERENCES
         ====================================================== */}
 
-        <section className="overflow-hidden bg-[#f8f9fb] py-16 lg:py-20">
+        <section
+          className="overflow-hidden bg-[#f8f9fb] py-16 lg:py-20"
+          aria-labelledby="client-references-heading"
+        >
           <div className="site-container">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -709,16 +825,25 @@ function Home() {
                 <span className="font-body text-xs font-medium text-[#168fd0]">
                   Selected company references
                 </span>
-                <h2 className="mt-3 font-display text-2xl font-semibold tracking-[-0.02em] text-[#061735] md:text-3xl">
-                  Selected references
+
+                <h2
+                  id="client-references-heading"
+                  className="mt-3 font-display text-2xl font-semibold tracking-[-0.02em] text-[#061735] md:text-3xl"
+                >
+                  Organizations we have supported
                 </h2>
+
+                <p className="mt-3 max-w-2xl font-body text-sm leading-6 text-slate-500">
+                  Selected organizations across industrial, infrastructure,
+                  manufacturing, energy and critical electrical applications.
+                </p>
               </div>
 
               <Link
                 to="/clients"
                 className="group inline-flex items-center gap-2 font-body text-sm font-medium text-[#061735] no-underline transition-colors hover:text-[#168fd0]"
               >
-                View company references
+                View all company references
                 <ArrowUpRight
                   size={15}
                   strokeWidth={1.5}
@@ -730,19 +855,85 @@ function Home() {
 
           <div className="mt-12 overflow-hidden border-y border-black/10 bg-white py-8">
             <div className="client-marquee flex w-max items-center">
-              {[...clients, ...clients].map((client, index) => {
-                const name = getClientName(client)
-                return (
+              {[...clientReferences, ...clientReferences].map(
+                (client, index) => (
                   <div
-                    key={`${name}-${index}`}
-                    className="mx-8 flex h-16 min-w-[170px] items-center justify-center whitespace-nowrap md:mx-10 md:min-w-[190px]"
+                    key={`${client.name}-${index}`}
+                    className="mx-7 flex h-20 min-w-[220px] items-center gap-4 md:mx-9 md:min-w-[250px]"
                   >
-                    <span className="px-3 text-center font-display text-sm font-semibold tracking-[-0.01em] text-[#061735]/65 transition-colors duration-300 hover:text-[#168fd0] md:text-base">
-                      {name}
+                    <div
+                      className="
+                        flex
+                        h-12
+                        w-14
+                        shrink-0
+                        items-center
+                        justify-center
+                        border
+                        border-[#061735]/[0.08]
+                        bg-[#fbfcfd]
+                        p-2
+                      "
+                    >
+                      <img
+                        src={client.logo}
+                        alt={`${client.name} logo`}
+                        loading="lazy"
+                        decoding="async"
+                        referrerPolicy="no-referrer"
+                        className="max-h-9 max-w-10 object-contain"
+                        onError={(event) => {
+                          event.currentTarget.style.display = 'none'
+
+                          const fallback =
+                            event.currentTarget.nextElementSibling
+
+                          if (fallback) {
+                            fallback.classList.remove('hidden')
+                          }
+                        }}
+                      />
+
+                      <span
+                        className="
+                          hidden
+                          text-center
+                          font-mono
+                          text-[0.55rem]
+                          font-semibold
+                          tracking-[0.08em]
+                          text-[#061735]/45
+                        "
+                      >
+                        {client.name
+                          .split(' ')
+                          .map((word) => word[0])
+                          .slice(0, 3)
+                          .join('')}
+                      </span>
+                    </div>
+
+                    <span
+                      className="
+                        max-w-[180px]
+                        font-display
+                        text-sm
+                        font-semibold
+                        leading-tight
+                        tracking-[-0.01em]
+                        text-[#061735]/65
+                        transition-colors
+                        duration-300
+                        hover:text-[#168fd0]
+                        md:max-w-[210px]
+                        md:text-base
+                      "
+                    >
+                      {client.name}
                     </span>
                   </div>
-                )
-              })}
+                ),
+              )}
             </div>
           </div>
         </section>
