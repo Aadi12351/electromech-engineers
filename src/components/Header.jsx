@@ -3,20 +3,22 @@ import { Link, NavLink, useLocation } from 'react-router-dom'
 import {
   ArrowUpRight,
   ChevronDown,
+  Download,
   Globe2,
   Mail,
   Menu,
-  Search,
   X,
 } from 'lucide-react'
 
 import { services } from '../data/data'
 import { motion, AnimatePresence } from 'framer-motion'
+import ProjectEnquiryModal from './ProjectEnquiryModal'
 
 function Header() {
   const [open, setOpen] = useState(false)
   const [servicesOpen, setServicesOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [projectOpen, setProjectOpen] = useState(false)
 
   const location = useLocation()
 
@@ -671,19 +673,20 @@ function Header() {
                 pl-5
               "
             >
-              <button
-                type="button"
-                aria-label="Language"
+              <a
+                href="https://www.google.com/maps/search/?api=1&query=Electro+Mech+Engineers+Nerul+Navi+Mumbai"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="View Electro Mech Engineers on Google"
+                title="View us on Google"
                 className="
                   flex
                   h-9
                   w-9
                   items-center
                   justify-center
-                  border-0
-                  bg-transparent
-                  p-0
                   text-white/65
+                  no-underline
                   transition-colors
                   hover:text-white
                 "
@@ -692,7 +695,7 @@ function Header() {
                   size={19}
                   strokeWidth={1.35}
                 />
-              </button>
+              </a>
 
               <Link
                 to="/contact"
@@ -715,36 +718,37 @@ function Header() {
                 />
               </Link>
 
-              <button
-                type="button"
-                aria-label="Search"
+              <a
+                href="/assets/Electro-Mech-Company-Profile.pdf"
+                download
+                aria-label="Download company profile"
+                title="Download company profile"
                 className="
                   flex
                   h-9
                   w-9
                   items-center
                   justify-center
-                  border-0
-                  bg-transparent
-                  p-0
                   text-white/65
+                  no-underline
                   transition-colors
-                  hover:text-white
+                  hover:text-[#c8a45c]
                 "
               >
-                <Search
+                <Download
                   size={19}
                   strokeWidth={1.35}
                 />
-              </button>
+              </a>
             </div>
 
             {/* =================================================
                 CTA
             ================================================== */}
 
-            <Link
-              to="/contact"
+            <button
+              type="button"
+              onClick={() => setProjectOpen(true)}
               className="
                 ml-4
                 inline-flex
@@ -760,7 +764,7 @@ function Header() {
                 font-medium
                 tracking-wide
                 text-black
-                no-underline
+                cursor-pointer
                 transition-all
                 duration-300
                 hover:bg-transparent
@@ -773,7 +777,7 @@ function Header() {
                 size={15}
                 strokeWidth={1.8}
               />
-            </Link>
+            </button>
           </nav>
 
           {/* =====================================================
@@ -1079,9 +1083,12 @@ function Header() {
           {/* MOBILE BOTTOM */}
 
           <div className="mt-auto pt-8">
-            <Link
-              to="/contact"
-              onClick={closeMenu}
+            <button
+              type="button"
+              onClick={() => {
+                closeMenu()
+                setProjectOpen(true)
+              }}
               className="
                 flex
                 w-full
@@ -1098,7 +1105,7 @@ function Header() {
                 font-medium
                 tracking-wide
                 text-black
-                no-underline
+                cursor-pointer
                 transition-all
                 duration-300
                 hover:bg-transparent
@@ -1107,26 +1114,36 @@ function Header() {
             >
               Start a Project
               <ArrowUpRight size={17} />
-            </Link>
+            </button>
 
             <div className="mt-5 flex items-center justify-center gap-5">
-              <Globe2
-                size={18}
-                strokeWidth={1.3}
-                className="text-white/35"
-              />
+              <a
+                href="https://www.google.com/maps/search/?api=1&query=Electro+Mech+Engineers+Nerul+Navi+Mumbai"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="View Electro Mech Engineers on Google"
+                className="text-white/45 transition-colors hover:text-white"
+              >
+                <Globe2 size={18} strokeWidth={1.3} />
+              </a>
 
-              <Mail
-                size={18}
-                strokeWidth={1.3}
-                className="text-white/35"
-              />
+              <Link
+                to="/contact"
+                onClick={closeMenu}
+                aria-label="Contact Electro Mech Engineers"
+                className="text-white/45 transition-colors hover:text-white"
+              >
+                <Mail size={18} strokeWidth={1.3} />
+              </Link>
 
-              <Search
-                size={18}
-                strokeWidth={1.3}
-                className="text-white/35"
-              />
+              <a
+                href="/assets/Electro-Mech-Company-Profile.pdf"
+                download
+                aria-label="Download company profile"
+                className="text-white/45 transition-colors hover:text-[#c8a45c]"
+              >
+                <Download size={18} strokeWidth={1.3} />
+              </a>
             </div>
 
             <p
@@ -1145,6 +1162,11 @@ function Header() {
           </div>
         </div>
       </div>
+
+      <ProjectEnquiryModal
+        open={projectOpen}
+        onClose={() => setProjectOpen(false)}
+      />
     </>
   )
 }

@@ -33,6 +33,8 @@ function PageHero({
   copy,
   image,
   imageAlt,
+  video,
+  poster,
 }) {
   return (
     <section
@@ -47,25 +49,48 @@ function PageHero({
         md:min-h-[580px]
       "
     >
-
-      {/* =========================================
-          BACKGROUND IMAGE
-      ========================================== */}
+      {/* BACKGROUND MEDIA */}
 
       <div className="absolute inset-0">
+        {video ? (
+          <video
+            className="
+              h-full
+              w-full
+              object-cover
+              object-center
+            "
+            poster={poster || image}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            aria-label={imageAlt || `${title} — Electro Mech Engineers`}
+          >
+            <source src={video} type="video/quicktime" />
 
-        <img
-          src={image}
-          alt={imageAlt || `${title} — Electro Mech Engineers`}
-          className="
-            h-full
-            w-full
-            object-cover
-            object-center
-          "
-        />
+            {/* Optional production MP4 fallback */}
+            <source
+              src="/assets/ElectromechHero.mp4"
+              type="video/mp4"
+            />
+          </video>
+        ) : (
+          <img
+            src={image}
+            alt={imageAlt || `${title} — Electro Mech Engineers`}
+            className="
+              h-full
+              w-full
+              object-cover
+              object-center
+            "
+          />
+        )}
 
         {/* Main dark gradient */}
+
         <div
           className="
             absolute
@@ -78,6 +103,7 @@ function PageHero({
         />
 
         {/* Bottom fade */}
+
         <div
           className="
             absolute
@@ -89,15 +115,10 @@ function PageHero({
           "
         />
 
-        {/* Subtle blue overlay */}
         <div className="absolute inset-0 bg-[#061735]/10" />
-
       </div>
 
-
-      {/* =========================================
-          ENGINEERING GRID
-      ========================================== */}
+      {/* ENGINEERING GRID */}
 
       <div
         aria-hidden="true"
@@ -110,11 +131,7 @@ function PageHero({
         "
       />
 
-
-      {/* =========================================
-          CONTENT
-          SAME CONTAINER AS HEADER
-      ========================================== */}
+      {/* CONTENT */}
 
       <div
         className="
@@ -130,23 +147,16 @@ function PageHero({
           xl:px-4
         "
       >
-
         <motion.div
           initial="hidden"
           animate="visible"
           variants={stagger}
           className="max-w-4xl"
         >
-
-          {/* =====================================
-              EYEBROW
-          ====================================== */}
-
           <motion.div
             variants={fadeUp}
             className="flex items-center gap-3"
           >
-
             <span className="h-px w-8 bg-[#29b6f6]" />
 
             <span
@@ -161,13 +171,7 @@ function PageHero({
             >
               {eyebrow}
             </span>
-
           </motion.div>
-
-
-          {/* =====================================
-              TITLE
-          ====================================== */}
 
           <motion.h1
             variants={fadeUp}
@@ -190,11 +194,6 @@ function PageHero({
             {title}
           </motion.h1>
 
-
-          {/* =====================================
-              COPY
-          ====================================== */}
-
           <motion.p
             variants={fadeUp}
             className="
@@ -210,27 +209,12 @@ function PageHero({
           >
             {copy}
           </motion.p>
-
         </motion.div>
-
       </div>
 
+      {/* BOTTOM META */}
 
-      {/* =========================================
-          BOTTOM META
-          SAME 1280px HEADER CONTAINER
-      ========================================== */}
-
-      <div
-        className="
-          absolute
-          bottom-7
-          left-0
-          right-0
-          z-10
-        "
-      >
-
+      <div className="absolute bottom-7 left-0 right-0 z-10">
         <div
           className="
             mx-auto
@@ -244,11 +228,7 @@ function PageHero({
             xl:px-4
           "
         >
-
-          {/* LEFT BOTTOM LINE */}
-
           <div className="hidden items-center gap-3 lg:flex">
-
             <span className="h-px w-10 bg-white/20" />
 
             <span
@@ -262,11 +242,7 @@ function PageHero({
             >
               Engineering & Reliability
             </span>
-
           </div>
-
-
-          {/* PAGE CODE */}
 
           <span
             className="
@@ -281,11 +257,8 @@ function PageHero({
           >
             ELECTRO MECH / 01
           </span>
-
         </div>
-
       </div>
-
     </section>
   )
 }

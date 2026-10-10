@@ -84,11 +84,11 @@ ${message}
     <>
 <SEO
         title="Contact Electro Mech Engineers | Electrical Testing & Commissioning Mumbai"
-        description="Contact Electro Mech Engineers in Navi Mumbai for industrial electrical testing, numerical relay coordination, relay setting calculations, power system studies and substation commissioning up to 132kV."
+        description="Contact Electro Mech Engineers in Mulund, Mumbai for industrial electrical testing, relay coordination, power system studies and substation commissioning up to 132kV."
         path="/contact"
         image="/assets/contact.png"
         keywords={[
-          'electrical testing company Navi Mumbai',
+          'electrical testing company Mumbai',
           'relay coordination consultants Mumbai',
           '132kV commissioning services Mumbai',
           'electrical engineering consultancy Maharashtra',
@@ -262,6 +262,24 @@ ${message}
                       Electrical Consulting Engineers
                     </span>
                   </div>
+                </div>
+
+                <div className="mt-6 border border-[#061735]/10 bg-white p-5">
+                  <p className="font-body text-sm font-semibold text-[#061735]">Company credentials</p>
+                  <dl className="mt-4 space-y-3 font-body text-sm">
+                    {[
+                      ['GST', company.credentials.gst],
+                      ['UDYAM', company.credentials.udyam],
+                      ['ESIC', company.credentials.esic],
+                      ['PF', company.credentials.pf],
+                      ['Electrical contractor licence', company.credentials.electricalContractorLicence],
+                    ].map(([label, value]) => (
+                      <div key={label} className="grid grid-cols-[110px_1fr] gap-3 border-t border-[#061735]/[0.07] pt-3 first:border-0 first:pt-0">
+                        <dt className="text-[#061735]/45">{label}</dt>
+                        <dd className="break-all font-medium text-[#061735]">{value}</dd>
+                      </div>
+                    ))}
+                  </dl>
                 </div>
               </motion.div>
 
@@ -549,7 +567,7 @@ ${message}
             >
               <iframe
                 title="Electro Mech Engineers location"
-                src="https://www.google.com/maps?q=Electro%20Mech%20Engineers%20Nerul%20Navi%20Mumbai&output=embed"
+                src="https://www.google.com/maps?q=C3-906%20Lok%20Everest%20JSD%20Road%20Mulund%20West%20Mumbai%20400080&output=embed"
                 loading="lazy"
                     decoding="async"
                 referrerPolicy="no-referrer-when-downgrade"
@@ -565,7 +583,7 @@ ${message}
                 </div>
 
                 <b className="block font-display text-lg font-semibold tracking-[-0.02em] text-white">
-                  Nerul, Navi Mumbai
+                  Mulund West, Mumbai
                 </b>
 
                 <small className="mt-1 block font-body text-xs text-white/45">

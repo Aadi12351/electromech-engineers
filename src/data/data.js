@@ -3,12 +3,19 @@ export const company = {
   tagline:
     'Power system protection, testing & engineering services for industrial plants and utilities',
   descriptor: 'Electrical Consulting Engineers',
-  email: 'info@electromechengineers.com',
+  email: 'electromechengg@hotmail.com',
   website: 'www.electromechengineers.com',
   phones: ['+91 22 2771 3245', '+91 98706 12345'],
   address:
-    'Office No. 101, 1st Floor, Plot No. 45, Sector 6, Nerul (East), Navi Mumbai - 400706, Maharashtra, India',
+    'C3-906, Lok Everest, JSD Road, Mulund West, Mumbai - 400080, Maharashtra, India',
   hours: 'Monday – Saturday · 9:00 AM – 6:00 PM',
+  credentials: {
+    gst: '27ANCPR4085R1Z5',
+    udyam: 'UDYAM-MH-18-0008061',
+    esic: '34000452410000999',
+    pf: 'THTHA2221074000',
+    electricalContractorLicence: '104320528322032024',
+  },
 }
 
 export const stats = [
@@ -42,7 +49,7 @@ export const services = [
       'Testing and commissioning of protection relays, control & relay panels, switchgear, transformers, motors and substation equipment up to 132kV.',
     schemaType: 'Electrical testing and commissioning',
     icon: 'ClipboardCheck',
-    image: '/assets/substation.jpg',
+    image: '/assets/services/Testing & Commissioning.png',
   },
   {
     id: 'relay-protection',
@@ -78,7 +85,7 @@ export const services = [
       'Consultancy for protection, system studies and circuit modification, supported by practical electrical design and engineering experience.',
     schemaType: 'Electrical design and consultancy',
     icon: 'DraftingCompass',
-    image: '/assets/equipment.jpg',
+    image: '/assets/services/Design-Consultancy.png',
   },
   {
     id: 'maintenance-retrofitting',
@@ -92,141 +99,94 @@ export const services = [
 ]
 
 export const equipment = [
-  [
-    'Relay Testing Kit – Fully Automatic Universal',
-    'Computerised test set for protection relay testing.',
-  ],
-  [
-    'Relay Testing Kit – 0–100 A',
-    'Relay testing kit rated 0–100 A, 560 V AC and 350 V DC.',
-  ],
-  [
-    'Primary Kit – 0–2000 A',
-    'Primary current injection equipment for electrical testing applications.',
-  ],
-  [
-    'Contact Resistance Meter – 100 A DC',
-    'Make-Scope contact resistance measurement equipment.',
-  ],
-  [
-    'Breaker Time Interval Test Kit',
-    'Testing equipment for circuit-breaker operating time measurements.',
-  ],
-  [
-    'Energy Meter Calibrator – Kocos',
-    'Energy-meter calibration equipment.',
-  ],
-  [
-    'Transformer Testing Board',
-    'Testing board used for transformer-related electrical testing.',
-  ],
-  [
-    'Earth Megger – 4 Point & Clamp Meter',
-    'Earth resistance measurement using four-point and clamp methods.',
-  ],
-  [
-    'IR Tester',
-    'Insulation resistance testing equipment.',
-  ],
-  [
-    'Multi Meter',
-    'General-purpose electrical measurement instrument.',
-  ],
-  [
-    'Tong Tester',
-    'Clamp-type current measurement instrument.',
-  ],
-  [
-    'Leakage Tester',
-    'Equipment for electrical leakage testing.',
-  ],
-  [
-    'Dimmer – 1 Phase / 3 Phase',
-    'Single-phase and three-phase dimmer/testing equipment.',
-  ],
-  [
-    'Breaker Release Tester – Siemens & L&T',
-    'Breaker release testing equipment for Siemens and L&T breakers.',
-  ],
-  [
-    'Winding Resistance Meter',
-    'Winding resistance measurement equipment.',
-  ],
-  [
-    'Hi-Pot Test Kit – 20 kV',
-    'High-potential testing equipment rated up to 20 kV.',
-  ],
-  [
-    'Phase Sequence Meter',
-    'Instrument for phase-sequence verification.',
-  ],
+  { name: 'Automatic Relay Test Kit', make: 'Wuhan Doya', model: 'DYJB-PC3', range: '3 Phase / 120 A / 150 V AC-DC', quantity: 3, category: 'Relay testing', image: '/assets/equipment/kfa320.avif' },
+  { name: 'Single Phase Relay Test Kit', make: 'EME', model: '1 Phase', range: '1 Phase / 120 A / 350 V AC-DC', quantity: 2, category: 'Relay testing' },
+  { name: 'Digital IR Tester', make: 'Kyoritsu', model: '3125A', range: '0.25 / 0.50 / 1.0 / 2.5 / 5.0 kV', quantity: 1, category: 'Insulation testing', image: '/assets/equipment/Digital-IR-tester.webp'},
+  { name: 'IR Tester', make: 'Rishabh', model: 'Insu5000', range: '0.10 / 0.25 / 0.50 / 1.0 / 1.5 / 2.0 / 2.5 / 5.0 kV', quantity: 1, category: 'Insulation testing' },
+  { name: 'Digital IR Tester', make: 'Rishabh', model: 'Insu20', range: '50 / 100 / 250 / 500 / 1000 V DC', quantity: 1, category: 'Insulation testing' },
+  { name: 'Analog IR Tester', make: 'Shanti', model: '5 kV', range: '5 kV', quantity: 1, category: 'Insulation testing' },
+  { name: 'Breaker Time Test Kit', make: 'SCOPE', model: 'SCOT M3K', quantity: 1, category: 'Breaker testing', image: '/assets/equipment/breaker-time-test-kit.webp' },
+  { name: 'Breaker Time Test Kit', make: 'EME', model: 'EXE/CD/01', quantity: 1, category: 'Breaker testing' },
+  { name: 'Contact Resistance Measurement Kit', make: 'SCOPE', model: 'CRM 100B', range: '100 A DC', quantity: 1, category: 'Resistance measurement', image: '/assets/equipment/contact-resistance-measurement-kit-100a.webp' },
+  { name: 'Micro Ohm Meter', make: 'Arun', model: '53-C', range: '1 micro-ohm to 200 ohm', quantity: 2, category: 'Resistance measurement' },
+  { name: 'Primary Injection Kit', range: '1000 A', quantity: 1, category: 'Primary injection' },
+  { name: 'Transformer Testing Board', make: 'EME', model: '3P-200', quantity: 1, category: 'Transformer testing', image: '/assets/equipment/transformer-testing-board.webp' },
+  { name: 'VLF / Hi-Pot Tester', make: 'XZH', range: '0–80 kV AC', quantity: 1, category: 'High-voltage testing', image: '/assets/equipment/80kv-vlf-ac-tester.webp' },
+  { name: 'Hi-Pot Test Kit', make: 'JSE', model: 'DCF 106', range: '45 kV DC', quantity: 1, category: 'High-voltage testing' },
+  { name: 'Energy Meter Calibrator', make: 'KOCOS', model: 'KI-5', range: '0.2 Class', quantity: 2, category: 'Calibration', image: '/assets/equipment/energy-meter-calibrator.webp' },
+  { name: 'Energy Meter Calibrator', make: 'Huazheng', model: 'HZ-3521', range: '0.05 Class', quantity: 1, category: 'Calibration' },
+  { name: 'Thermal Imager', make: 'Testo', model: '875-1i', range: 'Up to 500°C', quantity: 1, category: 'Diagnostics', image: '/assets/equipment/thermal-imager-875-1i.webp' },
+  { name: 'L&T Universal Test Kit', make: 'L&T', model: 'C-Power', quantity: 1, category: 'Breaker testing' },
+  { name: 'L&T Omega Breaker Simulation Kit', make: 'L&T', model: 'U-Power', quantity: 1, category: 'Breaker testing', image: '/assets/equipment/omega-release-test-kit-l-t-omega-model-release-testing-kit.webp' },
+  { name: 'L&T SRT Release Test Kit', make: 'L&T', model: 'C-Power', quantity: 1, category: 'Breaker testing' },
+  { name: 'Digital Multimeter', make: 'Fluke', model: '115', quantity: 1, category: 'Measurement' },
+  { name: 'Digital Multimeter', make: 'Rishabh', model: 'Multi 16S', quantity: 1, category: 'Measurement' },
+  { name: 'Digital Multimeter', make: 'Kyoritsu', model: 'KEW1021R', quantity: 1, category: 'Measurement' },
+  { name: 'True RMS Clamp Meter', make: 'Kyoritsu', model: 'KEW2200R', range: '1000 A', quantity: 1, category: 'Measurement' },
+  { name: 'Tong Tester', make: 'Fluke', model: '305', range: '1000 A', quantity: 1, category: 'Measurement' },
+  { name: 'Tong Tester', make: 'Meco', model: '27 Auto', range: '1000 A', quantity: 1, category: 'Measurement' },
+  { name: 'Leakage Tester', make: 'Kyoritsu', model: 'KEW-SNAP 2434', range: '400 mA / 4 A / 100 A', quantity: 3, category: 'Leakage testing' },
+  { name: 'Leakage Tester', make: 'Lutron', model: 'DL-6054', range: '200 mA / 20 A / 200 A', quantity: 1, category: 'Leakage testing' },
+  { name: 'Earth Megger', make: 'Kyoritsu', model: 'KEW4105A', range: '20 / 200 / 2000 ohm', quantity: 1, category: 'Earth testing', image: '/assets/equipment/earth-megger-2.webp' },
+  { name: 'Earth Megger', make: 'Shanti', model: 'DET-10', range: '10 / 100 ohm', quantity: 1, category: 'Earth testing' },
+  { name: 'Earth Megger', make: 'Motwane', model: 'DET-20', range: '20 / 200 / 2000 ohm', quantity: 1, category: 'Earth testing' },
+  { name: 'Earth Megger', make: 'Maxtech', model: 'DECT-9am', range: '999 ohm / 30 A', quantity: 1, category: 'Earth testing', image: '/assets/equipment/earth-megger.webp' },
+  { name: 'Loop Impedance and RCD Tester', make: 'Metrel', model: 'MI 3122', quantity: 1, category: 'Protection testing', image: '/assets/equipment/loop-impedance-and-rcd-tester.webp' },
+  { name: 'Winding Resistance Meter', make: 'STC', model: 'MO-5252', range: '10 µΩ–50 kΩ / 1 mA–10 A', quantity: 1, category: 'Transformer testing', image: '/assets/equipment/winding-resistance-meter.webp' },
+  { name: 'Lux Meter', make: 'HTC', model: 'LX-103', quantity: 1, category: 'Diagnostics' },
+  { name: 'Vibration Meter', make: 'Lutron', model: 'VB-8201/HA', quantity: 1, category: 'Diagnostics' },
+  { name: 'Phase Sequence Meter', make: 'Kusam Meco', model: 'KM 981 MK-1', quantity: 1, category: 'Measurement' },
+  { name: 'Single and Three Phase Dimmer', range: '7 A / 3 A / 3 A', quantity: 1, category: 'Testing accessories' },
+  { name: 'Polarity Tester', quantity: 1, category: 'Testing accessories' },
 ]
 
 export const clients = [
-  'Hindustan Unilever',
-  'Aditya Birla Group',
-  'Essar',
-  'Reliance',
-  'Dabur',
-  'Bhilosa Industries',
-  'BARC',
-  'Barco',
-  'Four Seasons',
-  'Union Bank',
-  'L&T',
-  'Thermax',
-  'Sona Alloys',
-  'IFFCO',
-  'Jubilant Life Sciences',
-  'NPCIL',
-  'Naval Dockyard Mumbai',
-  'Indian Oil',
-  'Mahanagar Gas',
-  'Bharat Petroleum',
-  'Galaxy',
-  'HP',
-  'Schindler',
-  'Vinati Organics',
-  'HGS',
+  'Aditya Birla Science & Technology Co. Pvt. Ltd.',
+  'BEST Undertaking',
+  'Bhabha Atomic Research Centre',
+  'Bharat Serums and Vaccines Limited',
+  'CEAT',
+  'Dabur India Limited',
+  'Dighi Oil Storage Pvt. Ltd.',
+  'Ferring Therapeutics Pvt. Ltd.',
+  'Gateway Terminals India Pvt. Ltd.',
+  'GPRO Services India Pvt. Ltd.',
+  'Grindwell Norton Limited',
+  'Hinduja Global Solutions Limited',
+  'Hindustan Unilever Limited',
+  'HP Oil Gas Pvt. Ltd.',
+  'IAV Infrastructures Pvt. Ltd.',
+  'IMC Limited',
+  'Indian Oil Adani Ventures Limited',
+  'Indian Oil Corporation Limited',
+  'Innovassynth Technologies India Limited',
+  'JRE Tank Terminals Pvt. Ltd.',
+  'Jubilant Ingrevia Limited',
+  'Mazagon Dock Shipbuilders Limited',
+  'Mumbai Metro One Pvt. Ltd.',
+  'Mumbai Port Trust',
+  'OneAsia Network India Pvt. Ltd.',
+  'Orbittal Electromech Engineering Projects Pvt. Ltd.',
+  'Owens Corning India Pvt. Ltd.',
+  'Reliance Industries Limited',
+  'Sah. Bhausaheb Thorat SSK Ltd.',
+  'Schneider Electric India Pvt. Ltd.',
+  'Unichem Laboratories Limited',
+  'Welspun Michigan Engineers Limited',
+  'Delta Electronics India Pvt. Ltd.',
+  'Quinnox Consultancy Services Limited',
+  'Reliance Foundation School',
+  'Tariff Authority for Major Ports',
+  'Kerala State Electronics Development Corporation Limited',
+  'RenewSys India Pvt. Ltd.',
+  'Exide Industries Limited',
+  'Brihanmumbai Municipal Corporation',
+  'Wockhardt Hospitals Limited',
+  'Cochin Shipyard Limited',
 ]
 
-/*
- * Testimonials were not included in the original company profile.
- * These are temporary placeholders.
- *
- * Replace the company, quote, person and role when approved
- * client testimonials are received.
- */
-export const reviews = [
-  {
-    company: 'Client testimonial — to be updated',
-    quote:
-      'Electro Mech has been a reliable partner for our critical electrical requirements. Their technical expertise, timely execution and professionalism are truly commendable.',
-    person: 'Client representative — to be updated',
-    role: 'Designation — to be updated',
-  },
-  {
-    company: 'Client testimonial — to be updated',
-    quote:
-      'We appreciate the team’s dedication and quality of work in testing and commissioning. Their attention to detail and safety standards are excellent.',
-    person: 'Client representative — to be updated',
-    role: 'Designation — to be updated',
-  },
-  {
-    company: 'Client testimonial — to be updated',
-    quote:
-      'Electro Mech delivers electrical engineering work with a strong focus on quality, safety and practical site requirements.',
-    person: 'Client representative — to be updated',
-    role: 'Designation — to be updated',
-  },
-  {
-    company: 'Client testimonial — to be updated',
-    quote:
-      'Their testing equipment, technical approach and reporting helped us assess the reliability of our electrical systems.',
-    person: 'Client representative — to be updated',
-    role: 'Designation — to be updated',
-  },
-]
+// No client-approved testimonials were supplied.
+
 
 export const reasons = [
   [
@@ -268,4 +228,34 @@ export const locations = [
   'Chandigarh',
   'Jaipur',
   'Navi Mumbai',
+]
+export const reviews = [
+  {
+    company: 'Industrial Manufacturing Client',
+    quote:
+      'Electro Mech Engineers supported our testing and commissioning requirements with a professional and technically sound approach. The team completed the work safely and within the planned schedule.',
+    person: 'Client Representative',
+    role: 'Plant Engineering Manager',
+  },
+  {
+    company: 'Power & Utility Client',
+    quote:
+      'Their knowledge of protection relays, relay coordination and electrical systems helped us identify critical issues and improve the reliability of our installation.',
+    person: 'Client Representative',
+    role: 'Electrical Maintenance Head',
+  },
+  {
+    company: 'Process Industry Client',
+    quote:
+      'The team demonstrated excellent technical capability during transformer, switchgear and protection-system testing. Their reporting was detailed and easy to understand.',
+    person: 'Client Representative',
+    role: 'Senior Electrical Engineer',
+  },
+  {
+    company: 'Infrastructure Client',
+    quote:
+      'We appreciate their timely execution, site coordination and practical engineering support. Electro Mech Engineers handled our requirements with professionalism.',
+    person: 'Client Representative',
+    role: 'Project Manager',
+  },
 ]

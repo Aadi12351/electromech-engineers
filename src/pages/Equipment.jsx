@@ -1,498 +1,139 @@
 import React, { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import {
-  ArrowRight,
-  ArrowUpRight,
-  Search,
-  Gauge,
-  ShieldCheck,
-  CheckCircle2,
-  Activity,
-  Wrench,
-} from 'lucide-react'
-
-import {
-  company,
-  equipment,
-} from '../data/data'
-
+import { Activity, ArrowRight, ArrowUpRight, CheckCircle2, Gauge, Search, ShieldCheck, Wrench } from 'lucide-react'
+import { equipment } from '../data/data'
 import PageHero from '../components/PageHero'
 import SEO from '../components/SEO'
-import SectionIntro from '../components/SectionIntro'
 import EquipmentCard from '../components/EquipmentCard'
 
 const fadeUp = {
-  hidden: {
-    opacity: 0,
-    y: 30,
-  },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.65,
-      ease: [0.22, 1, 0.36, 1],
-    },
-  },
+  hidden: { opacity: 0, y: 24 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } },
 }
+const stagger = { hidden: {}, visible: { transition: { staggerChildren: 0.045 } } }
 
-const stagger = {
-  hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: 0.08,
-    },
-  },
-}
-
-const capabilityItems = [
-  {
-    number: '01',
-    icon: Gauge,
-    title: 'Measurement',
-    copy: 'Electrical parameters are measured using equipment suited to the specific asset and test requirement.',
-  },
-  {
-    number: '02',
-    icon: Activity,
-    title: 'Diagnostics',
-    copy: 'Diagnostic tools help engineers identify abnormal conditions and understand equipment performance.',
-  },
-  {
-    number: '03',
-    icon: ShieldCheck,
-    title: 'Verification',
-    copy: 'Testing supports verification of protection, insulation, electrical integrity and operating readiness.',
-  },
+const capabilities = [
+  { icon: Gauge, title: 'Measurement', copy: 'Calibrated instruments selected for the asset, test standard and required electrical parameter.' },
+  { icon: Activity, title: 'Diagnostics', copy: 'Field measurements help engineers identify abnormal conditions and assess equipment performance.' },
+  { icon: ShieldCheck, title: 'Verification', copy: 'Testing verifies protection, insulation integrity, operation and readiness before energisation.' },
 ]
 
-const checks = [
-  'Appropriate test methodology',
-  'Accurate measurement',
-  'Disciplined field execution',
-  'Clear technical reporting',
-]
+const checks = ['Appropriate test methodology', 'Accurate measurement', 'Disciplined field execution', 'Clear technical reporting']
 
 function Equipment() {
   const [query, setQuery] = useState('')
+  const [activeCategory, setActiveCategory] = useState('All equipment')
+  const categories = useMemo(() => ['All equipment', ...new Set(equipment.map((item) => item.category))], [])
 
   const filteredEquipment = useMemo(() => {
-    const searchTerm = query.trim().toLowerCase()
+    const term = query.trim().toLowerCase()
+    return equipment.filter((item) => {
+      const categoryMatch = activeCategory === 'All equipment' || item.category === activeCategory
+      const textMatch = !term || [item.name, item.make, item.model, item.range, item.category]
+        .filter(Boolean)
+        .some((value) => value.toLowerCase().includes(term))
+      return categoryMatch && textMatch
+    })
+  }, [query, activeCategory])
 
-    if (!searchTerm) return equipment
-
-    return equipment.filter(([name, description]) => (
-      name.toLowerCase().includes(searchTerm) ||
-      description.toLowerCase().includes(searchTerm)
-    ))
-  }, [query])
+  const featuredImages = equipment.filter((item) => item.image).slice(0, 3)
 
   return (
     <>
-<SEO
+      <SEO
         title="Electrical Testing Equipment | Electro Mech Engineers"
-        description="Explore relay test kits, primary injection equipment, contact resistance meters, breaker timing testers, insulation resistance testers and other electrical testing instruments used by Electro Mech Engineers."
+        description="Explore relay test kits, primary injection equipment, breaker testers, insulation testers, calibrators and diagnostic instruments used by Electro Mech Engineers."
         path="/equipment"
         image="/assets/Equipmensts_hero.png"
-        keywords={[
-          'relay testing equipment',
-          'primary injection test kit',
-          'breaker timing test kit',
-          'contact resistance meter',
-          'electrical testing instruments India',
-        ]}
+        keywords={['relay testing equipment', 'breaker testing kit', 'electrical testing instruments India', 'primary injection kit']}
       />
 
       <main className="overflow-hidden">
-        {/* =========================================================
-            HERO
-        ========================================================== */}
-
         <PageHero
           eyebrow="Equipment"
           title="Advanced tools. Accurate decisions."
-          copy="A practical toolkit for testing, diagnostics, commissioning and engineering verification."
+          copy="A field-ready instrument fleet for testing, diagnostics, commissioning and engineering verification."
           image="/assets/Equipmensts_hero.png"
-          imageAlt="Electrical testing and diagnostic equipment used for power-system commissioning"
+          imageAlt="Electrical testing and diagnostic equipment"
         />
 
-        {/* =========================================================
-            EQUIPMENT CATALOGUE
-        ========================================================== */}
+        <section className="relative overflow-hidden bg-[#eaf0f5] py-20 lg:py-28">
+          <div aria-hidden="true" className="absolute inset-0 opacity-50 bg-[linear-gradient(rgba(6,23,53,.045)_1px,transparent_1px),linear-gradient(90deg,rgba(6,23,53,.045)_1px,transparent_1px)] bg-[size:48px_48px]" />
+          <div aria-hidden="true" className="absolute -right-40 top-20 h-[520px] w-[520px] rounded-full bg-[#168fd0]/10 blur-3xl" />
 
-        <section className="bg-[#f5f7f9] py-24 lg:py-32">
-          <div className="site-container">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.12 }}
-              variants={stagger}
-            >
-              <div className="flex flex-col gap-10 border-b border-[#061735]/10 pb-10 lg:flex-row lg:items-end lg:justify-between">
-                <motion.div variants={fadeUp} className="max-w-3xl">
-                  <div className="mb-6 flex items-center gap-3">
-                    <span className="h-px w-10 bg-[#c8a45c]" />
-                    <span className="font-mono text-[0.6rem] font-medium uppercase tracking-[0.24em] text-[#168fd0]">
-                      Equipment catalogue
-                    </span>
-                  </div>
-
-                  <h2 className="font-display text-[2.7rem] font-semibold leading-[0.98] tracking-[-0.045em] text-[#061735] sm:text-5xl lg:text-[4.25rem]">
-                    Search our
-                    <span className="block text-[#168fd0]">
-                      testing toolkit.
-                    </span>
-                  </h2>
-
-                  <p className="mt-6 max-w-2xl font-body text-[0.98rem] leading-7 text-slate-500">
-                    Explore equipment used across electrical testing,
-                    diagnostics, commissioning and engineering activities.
-                  </p>
-                </motion.div>
-
-                <motion.div
-                  variants={fadeUp}
-                  className="w-full lg:max-w-[360px]"
-                >
-                  <label
-                    htmlFor="equipment-search"
-                    className="mb-3 block font-mono text-[0.55rem] uppercase tracking-[0.2em] text-[#061735]/35"
-                  >
-                    Find equipment
-                  </label>
-
-                  <div className="flex items-center border-b border-[#061735]/25 transition-colors duration-300 focus-within:border-[#168fd0]">
-                    <Search
-                      size={18}
-                      strokeWidth={1.5}
-                      className="shrink-0 text-[#061735]/35"
-                    />
-
-                    <input
-                      id="equipment-search"
-                      type="search"
-                      value={query}
-                      onChange={(event) => setQuery(event.target.value)}
-                      placeholder="Search equipment..."
-                      aria-label="Search testing equipment"
-                      className="h-12 w-full bg-transparent px-3 font-body text-sm text-[#061735] placeholder:text-[#061735]/30 focus:outline-none"
-                    />
-
-                    {query && (
-                      <button
-                        type="button"
-                        onClick={() => setQuery('')}
-                        className="font-mono text-[0.55rem] uppercase tracking-[0.14em] text-[#061735]/35 transition-colors hover:text-[#168fd0]"
-                      >
-                        Clear
-                      </button>
-                    )}
-                  </div>
-                </motion.div>
+          <div className="site-container relative z-10">
+            <motion.div initial="hidden" animate="visible" variants={fadeUp} className="grid overflow-hidden bg-[#061735] text-white lg:grid-cols-[1.08fr_.92fr]">
+              <div className="p-7 sm:p-10 lg:p-14">
+                <div className="flex items-center gap-3"><span className="h-px w-9 bg-[#c8a45c]" /><span className="font-body text-sm font-medium text-[#29b6f6]">Instrument catalogue</span></div>
+                <h2 className="mt-7 max-w-2xl font-display text-4xl font-semibold leading-[1.02] tracking-[-0.045em] sm:text-5xl lg:text-6xl">Built for accurate field decisions.</h2>
+                <p className="mt-6 max-w-xl font-body text-base leading-7 text-white/55">Explore {equipment.length} equipment models representing the company’s complete 46-unit testing inventory.</p>
+                <div className="mt-9 grid grid-cols-3 gap-px border border-white/10 bg-white/10">
+                  <div className="bg-[#061735] p-4"><strong className="block font-display text-2xl text-[#c8a45c]">46</strong><span className="font-body text-xs text-white/40">Total units</span></div>
+                  <div className="bg-[#061735] p-4"><strong className="block font-display text-2xl text-[#c8a45c]">{categories.length - 1}</strong><span className="font-body text-xs text-white/40">Categories</span></div>
+                  <div className="bg-[#061735] p-4"><strong className="block font-display text-2xl text-[#c8a45c]">80 kV</strong><span className="font-body text-xs text-white/40">VLF capacity</span></div>
+                </div>
               </div>
 
-              <motion.div
-                variants={fadeUp}
-                className="flex items-center justify-between border-b border-[#061735]/10 py-5"
-              >
-                <span className="font-mono text-[0.56rem] uppercase tracking-[0.18em] text-[#061735]/35">
-                  Showing{' '}
-                  <strong className="text-[#061735]">
-                    {filteredEquipment.length}
-                  </strong>{' '}
-                  {filteredEquipment.length === 1 ? 'item' : 'items'}
-                </span>
-
-                <span className="hidden font-mono text-[0.53rem] uppercase tracking-[0.18em] text-[#061735]/25 sm:block">
-                  Technical equipment directory
-                </span>
-              </motion.div>
-
-              {filteredEquipment.length > 0 ? (
-                <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                  {filteredEquipment.map(([name, description]) => {
-                    const originalIndex = equipment.findIndex(
-                      ([equipmentName]) => equipmentName === name
-                    )
-
-                    return (
-                      <EquipmentCard
-                        key={name}
-                        name={name}
-                        description={description}
-                        index={originalIndex}
-                      />
-                    )
-                  })}
-                </div>
-              ) : (
-                <motion.div
-                  variants={fadeUp}
-                  className="mt-10 flex min-h-[320px] flex-col items-center justify-center border border-[#061735]/10 bg-white px-6 text-center"
-                >
-                  <div className="flex h-14 w-14 items-center justify-center border border-[#061735]/10">
-                    <Search
-                      size={23}
-                      strokeWidth={1.4}
-                      className="text-[#168fd0]"
-                    />
+              <div className="grid min-h-[360px] grid-cols-2 gap-px bg-white/10">
+                {featuredImages.map((item, index) => (
+                  <div key={item.image} className={`group relative overflow-hidden bg-white ${index === 0 ? 'row-span-2' : ''}`}>
+                    <img src={item.image} alt={item.name} className="h-full w-full object-contain p-3 transition-transform duration-700 group-hover:scale-105" />
+                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#061735] to-transparent px-4 pb-4 pt-14"><span className="font-body text-xs font-semibold text-white">{item.name}</span></div>
                   </div>
-
-                  <h3 className="mt-6 font-display text-2xl font-semibold tracking-[-0.03em] text-[#061735]">
-                    No equipment found
-                  </h3>
-
-                  <p className="mt-2 max-w-md font-body text-sm leading-6 text-slate-500">
-                    We couldn't find equipment matching "{query}".
-                  </p>
-
-                  <button
-                    type="button"
-                    onClick={() => setQuery('')}
-                    className="group mt-7 inline-flex items-center gap-3 border-b border-[#061735]/20 pb-2 font-body text-sm font-semibold text-[#061735] transition-colors hover:border-[#c8a45c] hover:text-[#168fd0]"
-                  >
-                    View all equipment
-                    <ArrowRight
-                      size={16}
-                      strokeWidth={1.5}
-                      className="transition-transform group-hover:translate-x-1"
-                    />
-                  </button>
-                </motion.div>
-              )}
-            </motion.div>
-          </div>
-        </section>
-
-        {/* =========================================================
-            TESTING CAPABILITY
-        ========================================================== */}
-
-        <section className="bg-[#050f23] py-24 text-white lg:py-32">
-          <div className="site-container">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.12 }}
-              variants={stagger}
-            >
-              <SectionIntro
-                light
-                eyebrow="Testing capability"
-                title="The right instrument for the right measurement."
-                copy="Reliable engineering decisions depend on appropriate test methods, suitable instruments and disciplined field execution."
-              />
-
-              <div className="mt-14 grid gap-px border border-white/10 bg-white/10 md:grid-cols-3">
-                {capabilityItems.map(({ number, icon: Icon, title, copy }) => (
-                  <motion.article
-                    key={number}
-                    variants={fadeUp}
-                    className="group relative min-h-[330px] bg-[#061735] p-8 transition-colors duration-500 hover:bg-[#0a2148] lg:p-10"
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="flex h-12 w-12 items-center justify-center border border-white/10 transition-colors duration-300 group-hover:border-[#c8a45c]/50">
-                        <Icon
-                          size={24}
-                          strokeWidth={1.4}
-                          className="text-[#29b6f6] transition-colors group-hover:text-[#c8a45c]"
-                        />
-                      </div>
-
-                      <span className="font-mono text-[0.57rem] tracking-[0.2em] text-white/25">
-                        {number}
-                      </span>
-                    </div>
-
-                    <div className="absolute bottom-8 left-8 right-8 lg:bottom-10 lg:left-10 lg:right-10">
-                      <span className="mb-5 block h-px w-8 bg-[#c8a45c] transition-all duration-500 group-hover:w-14" />
-
-                      <h3 className="font-display text-2xl font-semibold tracking-[-0.03em] text-white">
-                        {title}
-                      </h3>
-
-                      <p className="mt-4 max-w-sm font-body text-sm leading-6 text-white/45">
-                        {copy}
-                      </p>
-                    </div>
-
-                    <span className="absolute bottom-0 left-0 h-[2px] w-0 bg-[#c8a45c] transition-all duration-500 group-hover:w-full" />
-                  </motion.article>
                 ))}
               </div>
             </motion.div>
+
+            <div className="mt-12 grid gap-8 lg:grid-cols-[1fr_350px] lg:items-end">
+              <div>
+                <h2 className="font-display text-3xl font-semibold tracking-[-0.035em] text-[#061735] sm:text-4xl">Find the right instrument</h2>
+                <div className="mt-6 flex flex-wrap gap-2">
+                  {categories.map((category) => (
+                    <button key={category} type="button" onClick={() => setActiveCategory(category)} className={`border px-4 py-2.5 font-body text-sm transition-colors ${activeCategory === category ? 'border-[#061735] bg-[#061735] text-white' : 'border-[#061735]/15 bg-white text-[#061735]/65 hover:border-[#168fd0] hover:text-[#168fd0]'}`}>{category}</button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="equipment-search" className="mb-3 block font-body text-sm font-medium text-[#061735]/55">Search by equipment, make or model</label>
+                <div className="flex items-center border-b border-[#061735]/30 bg-white px-4 focus-within:border-[#168fd0]">
+                  <Search size={18} className="text-[#061735]/35" />
+                  <input id="equipment-search" type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Example: relay, Kyoritsu..." className="h-14 w-full bg-transparent px-3 font-body text-base text-[#061735] placeholder:text-[#061735]/30 focus:outline-none" />
+                  {query && <button type="button" onClick={() => setQuery('')} className="font-body text-sm text-[#168fd0]">Clear</button>}
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 flex items-center justify-between border-y border-[#061735]/10 py-4 font-body text-sm text-[#061735]/45"><span>Showing <strong className="text-[#061735]">{filteredEquipment.length}</strong> models</span><span className="hidden sm:block">Serial numbers retained as internal records</span></div>
+
+            {filteredEquipment.length ? (
+              <motion.div key={`${activeCategory}-${query}`} initial="hidden" animate="visible" variants={stagger} className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                {filteredEquipment.map((item) => <EquipmentCard key={`${item.name}-${item.make || ''}-${item.model || ''}`} item={item} index={equipment.indexOf(item)} />)}
+              </motion.div>
+            ) : (
+              <div className="mt-8 flex min-h-72 flex-col items-center justify-center border border-[#061735]/10 bg-white p-8 text-center"><Search size={28} className="text-[#168fd0]" /><h3 className="mt-5 font-display text-2xl font-semibold text-[#061735]">No matching equipment</h3><p className="mt-2 font-body text-base text-slate-500">Try another search or reset the selected category.</p><button type="button" onClick={() => { setQuery(''); setActiveCategory('All equipment') }} className="mt-6 inline-flex items-center gap-2 border-b border-[#061735]/25 pb-2 font-body text-sm font-semibold text-[#061735]">View all equipment <ArrowRight size={16} /></button></div>
+            )}
           </div>
         </section>
 
-        {/* =========================================================
-            EQUIPMENT IMAGE / ENGINEERING
-        ========================================================== */}
-
-        <section className="bg-white py-24 lg:py-32">
+        <section className="bg-[#050f23] py-20 text-white lg:py-28">
           <div className="site-container">
-            <div className="grid items-center gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-20">
-              <motion.div
-                initial={{ opacity: 0, x: -30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, amount: 0.2 }}
-                transition={{ duration: 0.7 }}
-                className="relative"
-              >
-                <div className="relative min-h-[500px] overflow-hidden bg-[#061735]">
-                  <img
-                    src="/assets/equipment.jpg"
-                    alt="Electrical testing and diagnostic equipment"
-                    loading="lazy"
-                    decoding="async"
-                    className="h-full min-h-[500px] w-full object-cover transition-transform duration-700 hover:scale-[1.03]"
-                  />
-
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#061735]/85 via-[#061735]/10 to-transparent" />
-
-                  <div className="absolute left-7 top-7 flex items-center gap-3">
-                    <span className="h-px w-8 bg-[#c8a45c]" />
-                    <span className="font-mono text-[0.55rem] uppercase tracking-[0.2em] text-white/45">
-                      Testing & diagnostics
-                    </span>
-                  </div>
-
-                  <div className="absolute bottom-7 left-7 right-7 flex items-end justify-between">
-                    <div>
-                      <span className="font-mono text-[0.52rem] uppercase tracking-[0.18em] text-white/40">
-                        Instrumentation
-                      </span>
-                      <p className="mt-2 font-display text-2xl font-semibold tracking-[-0.03em] text-white">
-                        Data becomes insight.
-                      </p>
-                    </div>
-
-                    <div className="flex h-12 w-12 items-center justify-center border border-white/15 bg-white/5 backdrop-blur-sm">
-                      <Wrench
-                        size={19}
-                        strokeWidth={1.4}
-                        className="text-[#c8a45c]"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="absolute -bottom-4 -left-4 hidden h-24 w-24 border-b border-l border-[#c8a45c]/50 lg:block" />
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, x: 30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, amount: 0.2 }}
-                transition={{ duration: 0.7 }}
-              >
-                <div className="mb-7 flex items-center gap-3">
-                  <span className="h-px w-10 bg-[#c8a45c]" />
-                  <span className="font-mono text-[0.6rem] font-medium uppercase tracking-[0.24em] text-[#168fd0]">
-                    Engineering confidence
-                  </span>
-                </div>
-
-                <h2 className="max-w-2xl font-display text-[2.7rem] font-semibold leading-[0.98] tracking-[-0.045em] text-[#061735] sm:text-5xl lg:text-[4.05rem]">
-                  Equipment is only part of the
-                  <span className="block text-[#168fd0]">
-                    engineering process.
-                  </span>
-                </h2>
-
-                <p className="mt-8 max-w-xl font-body text-[1rem] leading-7 text-slate-500">
-                  Test instruments generate data. Engineering experience turns
-                  that data into meaningful information about an electrical
-                  asset or system.
-                </p>
-
-                <div className="mt-8 border-t border-[#061735]/10">
-                  {checks.map((item, index) => (
-                    <div
-                      key={item}
-                      className="flex items-center gap-4 border-b border-[#061735]/10 py-4"
-                    >
-                      <span className="font-mono text-[0.53rem] tracking-[0.18em] text-[#061735]/25">
-                        {String(index + 1).padStart(2, '0')}
-                      </span>
-
-                      <CheckCircle2
-                        size={18}
-                        strokeWidth={1.4}
-                        className="shrink-0 text-[#168fd0]"
-                      />
-
-                      <span className="font-body text-sm font-medium text-[#061735]">
-                        {item}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-
-                <Link
-                  to="/services"
-                  className="group mt-9 inline-flex items-center gap-3 border-b border-[#061735]/20 pb-2 font-body text-sm font-semibold text-[#061735] no-underline transition-colors duration-300 hover:border-[#c8a45c] hover:text-[#168fd0]"
-                >
-                  Explore our services
-                  <ArrowUpRight
-                    size={17}
-                    strokeWidth={1.5}
-                    className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                  />
-                </Link>
-              </motion.div>
+            <div className="max-w-3xl"><div className="flex items-center gap-3"><span className="h-px w-9 bg-[#c8a45c]" /><span className="font-body text-sm font-medium text-[#29b6f6]">Testing capability</span></div><h2 className="mt-6 font-display text-4xl font-semibold tracking-[-0.04em] sm:text-5xl">The right instrument for the right measurement.</h2></div>
+            <div className="mt-12 grid gap-px border border-white/10 bg-white/10 md:grid-cols-3">
+              {capabilities.map(({ icon: Icon, title, copy }, index) => <article key={title} className="group bg-[#061735] p-8 transition-colors hover:bg-[#0a2148] lg:p-10"><div className="flex items-start justify-between"><Icon size={26} className="text-[#29b6f6]" /><span className="font-body text-xs text-white/25">0{index + 1}</span></div><h3 className="mt-20 font-display text-2xl font-semibold">{title}</h3><p className="mt-4 font-body text-base leading-7 text-white/45">{copy}</p></article>)}
             </div>
           </div>
         </section>
 
-        {/* =========================================================
-            CTA
-        ========================================================== */}
-
-        <section className="bg-[#061735] py-20 lg:py-24">
-          <div className="site-container">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={fadeUp}
-              className="relative overflow-hidden border border-white/10 px-7 py-10 md:px-10 lg:flex lg:items-center lg:justify-between lg:px-14 lg:py-12"
-            >
-              <div
-                aria-hidden="true"
-                className="absolute inset-0 opacity-[0.055] bg-[linear-gradient(rgba(255,255,255,0.7)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.7)_1px,transparent_1px)] bg-[size:42px_42px]"
-              />
-
-              <div className="relative z-10">
-                <div className="flex items-center gap-3">
-                  <span className="h-px w-10 bg-[#c8a45c]" />
-                  <span className="font-mono text-[0.58rem] uppercase tracking-[0.22em] text-[#29b6f6]">
-                    Need testing support?
-                  </span>
-                </div>
-
-                <h2 className="mt-5 max-w-3xl font-display text-[2.3rem] font-semibold leading-[1.02] tracking-[-0.045em] text-white sm:text-4xl lg:text-[3.5rem]">
-                  Tell us about your equipment
-                  <span className="block text-[#29b6f6]">
-                    and testing requirement.
-                  </span>
-                </h2>
-              </div>
-
-              <Link
-                to="/contact"
-                className="group relative z-10 mt-8 inline-flex w-fit shrink-0 items-center gap-3 border border-white/20 bg-white px-6 py-4 font-body text-sm font-semibold text-[#061735] no-underline transition-all duration-300 hover:border-[#c8a45c] hover:bg-[#c8a45c] lg:ml-12 lg:mt-0"
-              >
-                Discuss your requirement
-                <ArrowUpRight
-                  size={18}
-                  strokeWidth={1.5}
-                  className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                />
-              </Link>
-            </motion.div>
+        <section className="bg-white py-20 lg:py-28">
+          <div className="site-container grid items-center gap-14 lg:grid-cols-[1.05fr_.95fr]">
+            <div className="relative overflow-hidden bg-[#061735]"><img src="/assets/equipment/automatic-relay-test-kit.webp" alt="Automatic relay test kit used by Electro Mech Engineers" className="min-h-[430px] w-full object-contain p-6" /><div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#061735] to-transparent p-7 pt-24"><p className="font-display text-2xl font-semibold text-white">Automatic relay testing capability</p></div></div>
+            <div><div className="flex items-center gap-3"><span className="h-px w-9 bg-[#c8a45c]" /><span className="font-body text-sm font-medium text-[#168fd0]">Engineering confidence</span></div><h2 className="mt-6 font-display text-4xl font-semibold leading-tight tracking-[-0.04em] text-[#061735] sm:text-5xl">Equipment supports the engineering process.</h2><p className="mt-6 font-body text-base leading-7 text-slate-500">Test instruments generate measurements. Field experience turns those measurements into clear conclusions about an electrical asset or protection system.</p><div className="mt-8 border-t border-[#061735]/10">{checks.map((item) => <div key={item} className="flex items-center gap-4 border-b border-[#061735]/10 py-4"><CheckCircle2 size={18} className="text-[#168fd0]" /><span className="font-body text-base font-medium text-[#061735]">{item}</span></div>)}</div><Link to="/services" className="mt-9 inline-flex items-center gap-3 border-b border-[#061735]/25 pb-2 font-body text-sm font-semibold text-[#061735] no-underline hover:text-[#168fd0]">Explore our services <ArrowUpRight size={17} /></Link></div>
           </div>
         </section>
+
+        <section className="bg-[#061735] py-20 text-white"><div className="site-container flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between"><div><div className="flex items-center gap-3"><Wrench size={18} className="text-[#c8a45c]" /><span className="font-body text-sm text-[#29b6f6]">Need testing support?</span></div><h2 className="mt-4 max-w-3xl font-display text-3xl font-semibold tracking-[-0.035em] sm:text-4xl">Tell us about your equipment and testing requirement.</h2></div><Link to="/contact" className="inline-flex w-fit items-center gap-3 bg-[#c8a45c] px-6 py-4 font-body text-sm font-semibold text-[#061735] no-underline transition-colors hover:bg-white">Discuss your requirement <ArrowRight size={18} /></Link></div></section>
       </main>
     </>
   )

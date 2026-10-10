@@ -268,6 +268,10 @@ function Footer() {
             All rights reserved.
           </span>
 
+          <span className="font-body text-xs text-white/30">
+            GST {company.credentials.gst} · UDYAM {company.credentials.udyam}
+          </span>
+
           <div className="flex items-center gap-3">
 
             <span className="h-px w-6 bg-white/15" />
